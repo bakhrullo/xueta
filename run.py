@@ -22,7 +22,7 @@ async def on_shutdown(dp):
 def setup_django():
     os.environ.setdefault(
         "DJANGO_SETTINGS_MODULE",
-        "LogisticBot.settings"
+        "core.settings"
     )
     os.environ.update({'DJANGO_ALLOW_ASYNC_UNSAFE': "true"})
     django.setup()
@@ -35,4 +35,3 @@ if __name__ == '__main__':
     from handlers import dp
 
     executor.start_polling(dp, on_startup=on_startup, skip_updates=True)
-    # customer()
