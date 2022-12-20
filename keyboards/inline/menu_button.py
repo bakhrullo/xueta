@@ -49,19 +49,22 @@ async def phone_keyboard(lang):
 async def user_menu(lang):
     texts = []
     if lang == "uz":
-        texts = ["Mahsulotlar", "Sozlamalar", "Biz haqimizda", "Aloqa va manzillar", "Keshbeklar haqida ma'lumot", "Bonus"]
+        texts = ["Import", "Export", "Kontrakt", "Tif bojxona ro'yxati", "Omborlar ro'yxati", "Yuk tashish xizmati", "Pochta xizmati", "Yuk yetkazish", "Yuk sertifikatlash"]
     elif lang == "en":
-        texts = ["Products", "Settings", "About us", "Contact and addresses", "Information about cashbacks", "Bonus"]
+        texts = ["Import", "Export", "Contract", "Tif customs list", "Warehouse list", "Shipping service", "Postal service", "Delivery", "Cargo certification"]
     elif lang == "ru":
-        texts = ["Продукты", "Настройки", "О нас", "Контакты и адреса", "Информация о кэшбэках", "Бонус"]
+        texts = ["Импорт", "Экспорт", "Контракт", "Тифозный таможенный список", "Список складов", "Службы доставки", "Почтовая служба", "Доставка", "Сертификация грузов"]
 
     keyboard = ReplyKeyboardMarkup()
-    key1 = KeyboardButton(text=f"🛍 {texts[0]}")
-    key2 = KeyboardButton(text=f"⚙️ {texts[1]}")
-    key3 = KeyboardButton(text=f"ℹ️ {texts[2]}")
-    key4 = KeyboardButton(text=f"📞 {texts[3]}")
-    key5 = KeyboardButton(text=f"💰 {texts[4]}")
-    key6 = KeyboardButton(text=f"💎 {texts[5]}")
+    key1 = KeyboardButton(text=f"{texts[0]}")
+    key2 = KeyboardButton(text=f"{texts[1]}")
+    key3 = KeyboardButton(text=f"{texts[2]}")
+    key4 = KeyboardButton(text=f"{texts[3]}")
+    key5 = KeyboardButton(text=f"{texts[4]}")
+    key6 = KeyboardButton(text=f"{texts[5]}")
+    key7 = KeyboardButton(text=f"{texts[6]}")
+    key8 = KeyboardButton(text=f"{texts[7]}")
+    key9 = KeyboardButton(text=f"{texts[8]}")
     keyboard.add(key1)
     keyboard.add(key5, key6, key2)
     keyboard.add(key3, key4)

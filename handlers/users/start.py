@@ -249,3 +249,55 @@ async def get_phone(message: types.Message, state: FSMContext):
                 await message.answer("⚠️ Присланный проверочный код неверный. Попробуйте еще раз", reply_markup=markup)
             await state.set_state("get_otp")
 
+
+@dp.message_handler(state="get_category", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    back_key = await back_keyboard(lang)
+    if message.text in ["Import", "Импорт"]:
+        if lang == "uz":
+            await message.answer("Tovar nomini kiriting 👇", reply_markup=back_key)
+        if lang == "en":
+            await message.answer("Enter the product name 👇", reply_markup=back_key)
+        if lang == "ru":
+            await message.answer("Введите название продукта 👇", reply_markup=back_key)
+        await state.set_state("import_product_name")   
+    
+    
+@dp.message_handler(state="import_product_name", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        markup = await user_menu(lang)
+        if lang == "uz":
+            await message.answer("Botimizga xush kelibsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+        elif lang == "ru":
+            await message.answer("Добро пожаловать в наш бот. Выберите нужный раздел👇", reply_markup=markup)
+        elif lang == "en":
+            await message.answer("Welcome to our bot. Please select the desired section 👇", reply_markup=markup)
+        await state.set_state("get_category")
+    else:
+        await state.update_data(product_name=message.text)
+        back_key = await back_keyboard(lang)
+        if lang == "uz":
+            await message.answer("Tovar tn acd kodini kiriting 👇", reply_markup=back_key)
+        if lang == "en":
+            await message.answer("Enter the product tn acd code 👇", reply_markup=back_key)
+        if lang == "ru":
+            await message.answer("Введите код продукта tn acd 👇", reply_markup=back_key)
+        await state.set_state("import_product_acd")   
+        
+    
+@dp.message_handler(state="import_product_acd", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    back_key = await back_keyboard(lang)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        if lang == "uz":
+            await message.answer("Tovar nomini kiriting 👇", reply_markup=back_key)
+        if lang == "en":
+            await message.answer("Enter the product name 👇", reply_markup=back_key)
+        if lang == "ru":
+            await message.answer("Введите название продукта 👇", reply_markup=back_key)
+        await state.set_state("import_product_name")   
+        
