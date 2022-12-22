@@ -17,6 +17,7 @@ def add_user(user_id, referal_user):
     except Exception as exx:
         print(exx)
         return None
+
     
 @sync_to_async
 def get_user(user_id):
@@ -26,6 +27,7 @@ def get_user(user_id):
     except:
         return None
 
+
 @sync_to_async
 def get_lang(user_id):
     try:
@@ -34,4 +36,39 @@ def get_lang(user_id):
     except Exception as exx:
         print(exx)
         return None
+
+
+@sync_to_async
+def get_all_customs():
+    try:
+        customs = Customs.objects.all()
+        return customs
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_one_customs(id):
+    try:
+        customs = Customs.objects.get(id=id)
+        return customs
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async 
+def get_product_category_by_name(name):
+    try:
+        categories = ProductCategory.objects.all()
+        category = []
+        for i in categories:
+            if i.name_en == name or i.name_ru == name or i.name_uz == name:
+                category = i
+        return category
+    except Exception as exx:
+        print(exx)
+        return None
+
 
