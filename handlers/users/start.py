@@ -13,11 +13,26 @@ from aiogram.types import InlineQuery, \
     InputTextMessageContent, InlineQueryResultPhoto, InputMediaPhoto, InlineQueryResultArticle
 from aiogram.utils.deep_linking import decode_payload, get_start_link
 import re
+import requests
 
 
 def isValid(s):
     Pattern = re.compile("(0|91)?[7-9][0-9]{9}")
     return Pattern.match(s)
+
+
+username = "zoneagency"
+password = "j2e4AEFs84"
+
+def send_sms(otp, phone):
+    username = 'foodline'
+    password = 'JvYkp44)-J&9'
+    sms_data = {
+        "messages":[{"recipient":f"{phone}","message-id":"abc000000003","sms":{"originator": "3700","content": {"text": f"Ваш код подтверждения для DARGAH EDU BOT: {otp}"}}}]}
+    url = "http://91.204.239.44/broker-api/send"
+    res = requests.post(url=url, headers={}, auth=(username, password), json=sms_data)
+    print(res)
+
 
 
 def generateOTP():
@@ -139,7 +154,7 @@ async def get_phone(message: types.Message, state: FSMContext):
         user = await get_user(message.from_user.id)
         user.new_phone = phone
         otp = generateOTP()
-        # send_sms(otp=otp, phone=phone)
+        send_sms(otp=otp, phone=phone)
         user.otp = otp
         user.save()
         print(user.otp)
@@ -190,7 +205,7 @@ async def get_phone(message: types.Message, state: FSMContext):
             user = await get_user(message.from_user.id)
             user.new_phone = phone
             otp = generateOTP()
-            # send_sms(otp=otp, phone=phone)
+            send_sms(otp=otp, phone=phone)
             user.otp = otp
             user.save()
             print(user.otp)
@@ -293,7 +308,42 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Таможенный список брюшного тифа:", reply_markup=markup)
                 await message.answer("Выберите нужный раздел 👇", reply_markup=back_key)
-            await state.set_state("get_tif")                           
+            await state.set_state("get_tif") 
+        if message.text in ["Yuk xizmatlari", "Freight services", "Грузовые услуги"]:
+            markup = await freight_keyboard(lang)
+            back_key = await back_to_keyboard(lang)
+            if lang == "uz":
+                await message.answer(".", reply_markup=back_key)
+                await message.answer("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer(".", reply_markup=back_key)
+                await message.answer("Choose the type of service you need 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer(".", reply_markup=back_key)
+                await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
+            await state.set_state("get_freight_service")
+        if message.text in ["Omborlar ro'yxati", "Warehouse list", "Список складов"]:
+            back_key = await back_to_keyboard(lang)
+            markup = await region_keyboard(lang)
+            if lang == "uz":
+                await message.answer(".", reply_markup=back_key)
+                await message.answer("Kerakli viloyatni tanlang 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer(".", reply_markup=back_key)
+                await message.answer("Select the desired region 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer(".", reply_markup=back_key)
+                await message.answer("Выберите нужный регион 👇", reply_markup=markup)
+            await state.set_state("get_region")                                      
+        if message.text in ["Eng yaqin manzillar", "Nearest addresses", "Самые близкие адреса"]:
+            markup = await location_send(lang)
+            if lang == "uz":
+                await message.answer("Joylashuv manzilingizni jo'nating 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer("Please send your location address 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer("Отправьте свое местоположение 👇", reply_markup=markup)
+            await state.set_state("get_location")
     else:
         if lang == "uz":
             await message.answer("Firmangiz nomini kiriting 👇", reply_markup=back_key)
@@ -301,8 +351,8 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await message.answer("Enter your company name 👇", reply_markup=back_key)
         if lang == "ru":
             await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
-        await state.set_state("get_company_name")               
-        
+        await state.set_state("get_company_name")
+
 
 @dp.callback_query_handler(state="get_tif")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):
@@ -319,11 +369,239 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             await bot.send_message(chat_id=call.from_user.id, text="Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
         await state.set_state('get_category')
     else:
-        pass
+        customs = await get_one_customs(call.data)
+        if lang == "uz":
+            await call.message.edit_text(customs.description_uz)
+        if lang == "en":
+            await call.message.edit_text(customs.description_en)
+        if lang == "ru":
+            await call.message.edit_text(customs.description_ru)
+
+
+@dp.callback_query_handler(state="get_region")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        await call.message.delete()
+        markup = await user_menu(lang)
+        if lang == "uz":
+            await bot.send_message(chat_id=call.from_user.id, text="Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+        elif lang == "en":
+            await bot.send_message(chat_id=call.from_user.id, text="Choose the section you want 👇", reply_markup=markup)
+        elif lang == "ru":
+            await bot.send_message(chat_id=call.from_user.id, text="Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+        await state.set_state('get_category')
+    else:
+        counts = await get_region_wearhouses(call.data)
+        await state.update_data(region_id=call.data)
+        text = ""
+        markup = await wearhouses_keyboard(region_id=call.data, lang=lang)
+        region = await get_region(call.data)
+        if lang == "uz":
+            text += f"{region.name_uz} viloyatida {counts} ta omborxona mavjud. Ular:"
+        if lang == "en":
+            text += f"There are {counts} warehouses in {region.name_en}. They are:"
+        if lang == "ru":
+            text += f"В регионе {region.name_ru} есть {counts} складов. Они есть:"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.set_state("get_wearhouse")
+
+
+@dp.callback_query_handler(state="get_wearhouse")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        markup = await region_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup)
+        await state.set_state("get_region") 
+    else:
+        await call.message.delete()
+        wearhouse = await get_wearhouse(call.data)
+        await bot.send_location(chat_id=call.from_user.id, longitude=wearhouse.longitude, latitude=wearhouse.latitude)
+        text = ""
+        if lang == "uz":
+            await bot.send_message(chat_id=call.from_user.id, text=f"{wearhouse.name_uz}\n\n{wearhouse.description_uz}", reply_markup=None)
+        if lang == "en":
+            await bot.send_message(chat_id=call.from_user.id, text=f"{wearhouse.name_en}\n\n{wearhouse.description_en}", reply_markup=None)
+        if lang == "ru":
+            await bot.send_message(chat_id=call.from_user.id, text=f"{wearhouse.name_ru}\n\n{wearhouse.description_ru}", reply_markup=None)
+        await state.set_state("wearhouse")
+
+
+@dp.message_handler(state="wearhouse", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        markup = await user_menu(lang)
+        data = await state.get_data()
+        region_id = data["region_id"]
+        counts = await get_region_wearhouses(region_id)
+        await state.update_data(region_id=region_id)
+        text = ""
+        markup = await wearhouses_keyboard(region_id=region_id, lang=lang)
+        region = await get_region(region_id)
+        if lang == "uz":
+            text += f"{region.name_uz} viloyatida {counts} ta omborxona mavjud. Ular:"
+        if lang == "en":
+            text += f"There are {counts} warehouses in {region.name_en}. They are:"
+        if lang == "ru":
+            text += f"В регионе {region.name_ru} есть {counts} складов. Они есть:"
+        await message.answer(text=text, reply_markup=markup)
+        await state.set_state("get_wearhouse")
+                                                     
+
+@dp.message_handler(state="get_freight_service", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        markup = await user_menu(lang)
+        if lang == "uz":
+            await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+        elif lang == "en":
+            await message.answer("Choose the section you want 👇", reply_markup=markup)
+        elif lang == "ru":
+            await message.answer("Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+        await state.set_state('get_category')
+
+
+@dp.message_handler(state="get_location", content_types=types.ContentTypes.LOCATION)
+async def get_locations(message: types.Message, state: FSMContext):
+    location = message.location
+    lang = await get_lang(message.from_user.id)
+    user_location = {"lon": location.longitude, "lat": location.latitude}
+    data = await get_adresses()
+    closect_wearhouse = closest(data=data, location=user_location)
+    wearhouse = await get_wearhouse(closect_wearhouse['id'])
+    await message.answer_location(longitude=wearhouse.longitude, latitude=wearhouse.latitude)
+    if lang == "uz":
+        await message.answer(text=f"{wearhouse.name_uz}\n\n{wearhouse.description_uz}")
+    if lang == "en":
+        await message.answer(text=f"{wearhouse.name_en}\n\n{wearhouse.description_en}")
+    if lang == "ru":
+        await message.answer(text=f"{wearhouse.name_ru}\n\n{wearhouse.description_ru}")
+
+
+@dp.message_handler(state="get_location", content_types=types.ContentTypes.TEXT)
+async def get_location(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        markup = await user_menu(lang)
+        if lang == "uz":
+            await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+        elif lang == "en":
+            await message.answer("Choose the section you want 👇", reply_markup=markup)
+        elif lang == "ru":
+            await message.answer("Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+        await state.set_state('get_category')
+
+
+@dp.message_handler(state="get_region", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        markup = await user_menu(lang)
+        if lang == "uz":
+            await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+        elif lang == "en":
+            await message.answer("Choose the section you want 👇", reply_markup=markup)
+        elif lang == "ru":
+            await message.answer("Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+        await state.set_state('get_category')
+
+
+@dp.message_handler(state="get_wearhouse", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        markup = await region_keyboard(lang)
+        if lang == "uz":
+            await message.answer("Kerakli viloyatni tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await message.answer("Select the desired region 👇", reply_markup=markup)
+        if lang == "ru":
+            await message.answer("Выберите нужный регион 👇", reply_markup=markup)
+        await state.set_state("get_region")                                      
+
+
+@dp.callback_query_handler(state="get_freight_service")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        await call.message.delete()
+        markup = await user_menu(lang)
+        if lang == "uz":
+            await bot.send_message(chat_id=call.from_user.id, text="Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+        elif lang == "en":
+            await bot.send_message(chat_id=call.from_user.id, text="Choose the section you want 👇", reply_markup=markup)
+        elif lang == "ru":
+            await bot.send_message(chat_id=call.from_user.id, text="Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+        await state.set_state('get_category')
+    if command == "loader_equipment":
+        markup = await loader_equipment_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text(text="Iltimos xizmat turini tanlang 👇", reply_markup=markup)
+        elif lang == "en":
+            await call.message.edit_text(text="Please select the type of service 👇", reply_markup=markup)
+        elif lang == "ru":
+            await call.message.edit_text(text="Пожалуйста, выберите тип услуги 👇", reply_markup=markup)
+        await state.set_state('get_equipment_type')
+    if command == "loader_service":
+        text = ""
+        loaders = await get_loaders()
+        for loader in loaders:
+            if lang == 'uz':
+                text += f"Ismi <b>{loader.name_uz}</b>\n\n{loader.description_uz}"
+            if lang == 'en':
+                text += f"Name <b>{loader.name_en}</b>\n\n{loader.description_en}"
+            if lang == 'ru':
+                text += f"Имя <b>{loader.name_ru}</b>\n\n{loader.description_uz}"
+        await call.message.delete()
+        markup = await back_keyboard(lang)
+        await bot.send_message(call.from_user.id, text=text, reply_markup=markup)
+        await state.set_state("loader_service")
+
+
+@dp.message_handler(state="loader_service", content_types=types.ContentTypes.TEXT)
+async def loader_service(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
+        back_key = await back_to_keyboard(lang)
+        markup = await freight_keyboard(lang)
+        if lang == "uz":
+            await message.answer(".", reply_markup=back_key)
+            await message.answer("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await message.answer(".", reply_markup=back_key)
+            await message.answer("Choose the type of service you need 👇", reply_markup=markup)
+        if lang == "ru":
+            await message.answer(".", reply_markup=back_key)
+            await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
+        await state.set_state("get_freight_service")
+    
         
-
-
-
+@dp.callback_query_handler(state="get_equipment_type")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        markup = await freight_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup)
+        await state.set_state("get_freight_service")
+    else:
+        pass
 
 @dp.message_handler(state="get_tif", content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
@@ -331,11 +609,11 @@ async def get_service_category(message: types.Message, state: FSMContext):
     if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
         markup = await user_menu(lang)
         if lang == "uz":
-            await message.answer("Botimizga xush kelibsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+            await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
         elif lang == "en":
-            await message.answer("Welcome to our bot. Choose the section you want 👇", reply_markup=markup)
+            await message.answer("Choose the section you want 👇", reply_markup=markup)
         elif lang == "ru":
-            await message.answer("Добро пожаловать в наш бот. Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+            await message.answer("Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
         await state.set_state('get_category')
  
  

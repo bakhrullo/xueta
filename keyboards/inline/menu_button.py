@@ -20,6 +20,7 @@ async def settings_keyboard(lang):
     keyboard.resize_keyboard = True
     return keyboard
 
+
 async def language_keyboard():
     keyboard = ReplyKeyboardMarkup()
     key1 = KeyboardButton(text="🇺🇿 O'zbek tili")
@@ -49,13 +50,19 @@ async def phone_keyboard(lang):
 async def user_menu(lang):
     keyboard = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True, one_time_keyboard=False)
     categories = Category.objects.all()
+    text = ""
     for category in categories:
         if lang == "uz":
+            text = "Eng yaqin manzillar"
             keyboard.insert(KeyboardButton(text=category.name_uz))
         if lang == "en":
+            text = "Nearest addresses"
             keyboard.insert(KeyboardButton(text=category.name_en))
         if lang == "ru":
+            text = "Самые близкие адреса"
             keyboard.insert(KeyboardButton(text=category.name_ru))
+    key1 = KeyboardButton(text=f"{text}")
+    keyboard.row(key1)
     return keyboard
 
 async def back_keyboard(lang):
@@ -148,3 +155,19 @@ async def product_categories(lang):
     key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
     keyboard.add(key1, key2)
     return keyboard
+
+
+async def location_send(lang):
+    text = []
+    if lang == 'uz':
+        text = ['Joylashuvni ulashish', "Orqaga"]
+    elif lang == 'ru':
+        text = ['Отправить местоположение', "Назад"]
+    elif lang == 'en':
+        text = ['Send location',  "Back"]
+    mrk = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
+    bt = KeyboardButton(f'📍 {text[0]}', request_location=True)
+    back_key = KeyboardButton(f"⬅️ {text[1]}")
+    mrk.add(bt)
+    mrk.add(back_key)
+    return mrk

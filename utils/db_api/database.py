@@ -49,10 +49,80 @@ def get_all_customs():
 
 
 @sync_to_async
+def get_regions():
+    try:
+        regions = Region.objects.all()
+        return regions
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_region(region_id):
+    try:
+        region = Region.objects.filter(id=region_id).first()
+        return region
+    except Exception as exx:
+        print(exx)
+        return None
+@sync_to_async
+
+
+def get_wearhouse(id):
+    try:
+        wearhouse = Wearhouse.objects.filter(id=id).first()
+        return wearhouse
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_wearhouse_by_region(region_id):
+    try:
+        wearhouses = Wearhouse.objects.filter(region__id=region_id).all()
+        return wearhouses
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_region_wearhouses(region_id):
+    try:
+        wearhouses = Wearhouse.objects.filter(region__id=region_id).all()
+        return len(wearhouses)
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
 def get_one_customs(id):
     try:
         customs = Customs.objects.get(id=id)
         return customs
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_equipments(type):
+    try:
+        equipments = LoaderEquipment.objects.filter(type=type)
+        return equipments
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_loaders():
+    try:
+        loaders = LoaderService.objects.all()
+        return loaders
     except Exception as exx:
         print(exx)
         return None
@@ -72,3 +142,15 @@ def get_product_category_by_name(name):
         return None
 
 
+@sync_to_async
+def get_adresses():
+    data = []
+    adresses = Wearhouse.objects.all()
+    for i in adresses:
+        d = {
+            "lon": float(i.longitude),
+            "lat": float(i.latitude),
+            "id": i.id,
+        }
+        data.append(d)
+    return data
