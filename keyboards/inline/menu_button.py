@@ -76,8 +76,8 @@ async def back_keyboard(lang):
 
     keyboard = ReplyKeyboardMarkup()
     key1 = KeyboardButton(text=f"🏠 {texts[1]}")
-    key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
-    keyboard.add(key1, key2)
+    # key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
+    keyboard.add(key1)
     keyboard.resize_keyboard = True
     return keyboard
 
@@ -100,18 +100,19 @@ async def back_to_keyboard(lang):
 async def get_phone_keyboard(lang):
     texts = []
     if lang == "uz":
-        texts = ["Orqaga", "Asosiy menyu", "Qo'ng'iroq buyurtma qilish"]
+        texts = ["Orqaga", "Asosiy menyu", "Qo'ng'iroq buyurtma qilish", "Savol qoldirish"]
     elif lang == "en":
-        texts = ["Back", "Main menu", "Order a call"]
+        texts = ["Back", "Main menu", "Order a call", "Leave a question"]
     elif lang == "ru":
-        texts = ["Назад", "Главное меню", "Заказ звонка"]
+        texts = ["Назад", "Главное меню", "Заказ звонка", "Оставить вопрос"]
 
     keyboard = ReplyKeyboardMarkup()
     key3 = KeyboardButton(text=f"{texts[2]}")
+    key4 = KeyboardButton(text=f"{texts[3]}")
     key1 = KeyboardButton(text=f"🏠 {texts[1]}")
-    key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
-    keyboard.add(key3)
-    keyboard.add(key1, key2)
+    # key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
+    keyboard.add(key3, key4)
+    keyboard.add(key1)
     keyboard.resize_keyboard = True
     return keyboard
 

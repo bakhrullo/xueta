@@ -5,13 +5,9 @@ from backend.models import *
 
 
 @sync_to_async
-def add_user(user_id, referal_user):
+def add_user(user_id, referal_user=None):
     try:
         user, created = User.objects.get_or_create(user_id=user_id)
-        if user.referal_user:
-            pass
-        else:
-            user.referal_user = referal_user
         user.save()
         return user
     except Exception as exx:
@@ -132,6 +128,20 @@ def get_loaders():
 def get_product_category_by_name(name):
     try:
         categories = ProductCategory.objects.all()
+        category = []
+        for i in categories:
+            if i.name_en == name or i.name_ru == name or i.name_uz == name:
+                category = i
+        return category
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async 
+def get_category_by_name(name):
+    try:
+        categories = Category.objects.all()
         category = []
         for i in categories:
             if i.name_en == name or i.name_ru == name or i.name_uz == name:

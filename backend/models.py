@@ -46,7 +46,7 @@ class User(models.Model):
     name = models.CharField(max_length=500, null=True, blank=True)
     lang = models.CharField(max_length=20, null=True, blank=True)
     order_type = models.CharField(max_length=25, null=True, blank=True)
-    interests = models.ManyToManyField(to=Category)
+    interests = models.ManyToManyField(to=Category, null=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     new_phone = models.CharField(max_length=20, null=True, blank=True)
     otp = models.CharField(max_length=20, null=True, blank=True)
@@ -59,9 +59,9 @@ class User(models.Model):
     
     def __str__(self):
         try:
-            return self.phone
+            return str(self.phone)
         except:
-            return self.user_id
+            return str(self.user_id)
 
     
 class Customs(models.Model):
@@ -157,3 +157,9 @@ class LocalLogisticCompany(models.Model):
 
     def __str__(self):
         return self.name_uz
+
+
+class Interest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    ctagory = models.ForeignKey(Category, on_delete=models.CASCADE)
+    used = models.BooleanField(default=False)
