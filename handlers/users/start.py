@@ -61,7 +61,7 @@ async def bot_start(message: types.Message, state: FSMContext):
     if user is not None:
         if user.lang:
             lang = await get_lang(message.from_user.id)
-            if user.name:
+            if user.phone:
                 markup = await user_menu(lang)
                 if lang == "uz":
                     await message.answer("Botimizga xush kelibsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
@@ -231,41 +231,45 @@ async def get_phone(message: types.Message, state: FSMContext):
             await state.set_state("get_phone_number")            
         
 
+@dp.message_handler(lambda message: message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"], state="get_otp")
+async def get_phone(message: types.Message, state: FSMContext):
+    user = await get_user(message.from_user.id)
+    lang = user.lang
+    markup = await phone_keyboard(lang)
+    if lang == "uz":
+        await message.answer("Telefon raqamininfizni xalqaro formatda(<b>998YYXXXXXXX</b>) kiriting. Yoki raqamni ulashing👇", reply_markup=markup)
+    elif lang == "en":
+        await message.answer("Enter your phone number in international format (<b>998YYXXXXXX</b>). Or share the number 👇", reply_markup=markup)
+    elif lang == "ru":
+        await message.answer("Введите свой номер телефона в международном формате (<b>998YYXXXXXX</b>). Или поделитесь номером👇", reply_markup=markup)
+    await state.set_state("get_phone_number")            
+
+
 @dp.message_handler(content_types=types.ContentTypes.TEXT, state="get_otp")
 async def get_phone(message: types.Message, state: FSMContext):
     user = await get_user(message.from_user.id)
     lang = user.lang
-    if "⬅️️" in message.text: 
-        markup = await phone_keyboard(lang)
+    if message.text == user.otp:
+        user.phone = user.new_phone
+        user.save()
+        markup = await user_menu(lang)
         if lang == "uz":
-            await message.answer("Telefon raqamininfizni xalqaro formatda(<b>998YYXXXXXXX</b>) kiriting. Yoki raqamni ulashing👇", reply_markup=markup)
+            await message.answer("Botimizga xush kelibsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
         elif lang == "en":
-            await message.answer("Enter your phone number in international format (<b>998YYXXXXXX</b>). Or share the number 👇", reply_markup=markup)
+            await message.answer("Welcome to our bot. Choose the section you want 👇", reply_markup=markup)
         elif lang == "ru":
-            await message.answer("Введите свой номер телефона в международном формате (<b>998YYXXXXXX</b>). Или поделитесь номером👇", reply_markup=markup)
-        await state.set_state("get_phone_number")            
+            await message.answer("Добро пожаловать в наш бот. Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+        await state.set_state("get_category")
     else:
-        if message.text == user.otp:
-            user.phone = user.new_phone
-            user.save()
-            markup = await user_menu(lang)
-            if lang == "uz":
-                await message.answer("Botimizga xush kelibsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
-            elif lang == "en":
-                await message.answer("Welcome to our bot. Choose the section you want 👇", reply_markup=markup)
-            elif lang == "ru":
-                await message.answer("Добро пожаловать в наш бот. Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
-            await state.set_state("get_category")
-        else:
-            lang = await get_lang(message.from_user.id)
-            markup = await back_to_keyboard(lang)
-            if lang == "uz":
-                await message.answer("⚠️ Yuborilgan tasdiqlash kodi xato. Qayta urinib ko'ring", reply_markup=markup)
-            elif lang == "en":
-                await message.answer("⚠️ The verification code sent is incorrect. Try again", reply_markup=markup)
-            elif lang == "ru":
-                await message.answer("⚠️ Присланный проверочный код неверный. Попробуйте еще раз", reply_markup=markup)
-            await state.set_state("get_otp")
+        lang = await get_lang(message.from_user.id)
+        markup = await back_to_keyboard(lang)
+        if lang == "uz":
+            await message.answer("⚠️ Yuborilgan tasdiqlash kodi xato. Qayta urinib ko'ring", reply_markup=markup)
+        elif lang == "en":
+            await message.answer("⚠️ The verification code sent is incorrect. Try again", reply_markup=markup)
+        elif lang == "ru":
+            await message.answer("⚠️ Присланный проверочный код неверный. Попробуйте еще раз", reply_markup=markup)
+        await state.set_state("get_otp")
 
 
 @dp.message_handler(state="get_category", content_types=types.ContentTypes.TEXT)
@@ -275,7 +279,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
     user = await get_user(message.from_user.id)
     await state.update_data(state=message.text)
     category = await get_category_by_name(message.text)
-    if category is not None:
+    if category is not None and category != []:
         user.interests.add(category)
         user.save()
     if user.full:
