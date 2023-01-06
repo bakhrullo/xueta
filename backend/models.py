@@ -46,7 +46,7 @@ class User(models.Model):
     name = models.CharField(max_length=500, null=True, blank=True)
     lang = models.CharField(max_length=20, null=True, blank=True)
     order_type = models.CharField(max_length=25, null=True, blank=True)
-    interests = models.ManyToManyField(to=Category, null=True)
+    interests = models.ManyToManyField(to=Category, null=True, blank=True)
     phone = models.CharField(max_length=20, null=True, blank=True)
     new_phone = models.CharField(max_length=20, null=True, blank=True)
     otp = models.CharField(max_length=20, null=True, blank=True)
@@ -127,6 +127,7 @@ class LoaderEquipment(models.Model):
     name_en = models.CharField(max_length=500, null=True, blank=True)
     name_ru = models.CharField(max_length=500, null=True, blank=True)
     type = models.CharField(max_length=100, null=True, choices=TYPE)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
     description_uz = models.TextField(max_length=5000, null=True, blank=True)
     description_en = models.TextField(max_length=5000, null=True, blank=True)
     description_ru = models.TextField(max_length=5000, null=True, blank=True)
@@ -135,22 +136,11 @@ class LoaderEquipment(models.Model):
         return self.name_uz
 
 
-class InternationalLogisticCompany(models.Model):
+class LogisticService(models.Model):
     name_uz = models.CharField(max_length=500, null=True, blank=True)
     name_en = models.CharField(max_length=500, null=True, blank=True)
     name_ru = models.CharField(max_length=500, null=True, blank=True)
-    description_uz = models.TextField(max_length=5000, null=True, blank=True)
-    description_en = models.TextField(max_length=5000, null=True, blank=True)
-    description_ru = models.TextField(max_length=5000, null=True, blank=True)
-
-    def __str__(self):
-        return self.name_uz
-
-
-class LocalLogisticCompany(models.Model):
-    name_uz = models.CharField(max_length=500, null=True, blank=True)
-    name_en = models.CharField(max_length=500, null=True, blank=True)
-    name_ru = models.CharField(max_length=500, null=True, blank=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
     description_uz = models.TextField(max_length=5000, null=True, blank=True)
     description_en = models.TextField(max_length=5000, null=True, blank=True)
     description_ru = models.TextField(max_length=5000, null=True, blank=True)
@@ -163,3 +153,26 @@ class Interest(models.Model):
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     ctagory = models.ForeignKey(Category, on_delete=models.CASCADE)
     used = models.BooleanField(default=False)
+    
+
+class TnVed(models.Model):
+    kod = models.CharField(max_length=500, null=True, blank=True)
+    description_uz = models.TextField(max_length=5000, null=True, blank=True)
+    description_en = models.TextField(max_length=5000, null=True, blank=True)
+    description_ru = models.TextField(max_length=5000, null=True, blank=True)
+
+    def __str__(self):
+        return self.kod
+
+
+class PostService(models.Model):
+    name_uz = models.CharField(max_length=500, null=True, blank=True)
+    name_en = models.CharField(max_length=500, null=True, blank=True)
+    name_ru = models.CharField(max_length=500, null=True, blank=True)
+    description_uz = models.TextField(max_length=5000, null=True, blank=True)
+    description_en = models.TextField(max_length=5000, null=True, blank=True)
+    description_ru = models.TextField(max_length=5000, null=True, blank=True)
+
+    def __str__(self):
+        return self.name_uz
+

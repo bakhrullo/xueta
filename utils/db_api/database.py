@@ -1,8 +1,19 @@
-import datetime
 from typing import List, Any
 from asgiref.sync import sync_to_async
 from backend.models import *
+import pandas as pd
+from math import isnan
 
+
+def add_data(): 
+    dfUz = pd.read_excel('pochtaUz.xlsx')
+    dfEn = pd.read_excel('pochtaEn.xlsx')
+    dfRu = pd.read_excel('pochtaRu.xlsx')
+    print(dfUz["Telefon nomer"][14])
+
+    # for i in dfUz.index:
+    #     print(dfUz["Brend nomi"][i])
+    #     print(dfRu["Telefon nomer"][i])
 
 @sync_to_async
 def add_user(user_id, referal_user=None):
@@ -29,6 +40,18 @@ def get_lang(user_id):
     try:
         user = User.objects.filter(user_id=user_id).first()
         return user.lang
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_loader_equipments(type, region):
+    print(LoaderEquipment.objects.all()[0].type)
+    try:
+        region = Region.objects.get(id=region)
+        equipments = LoaderEquipment.objects.filter(region=region, type=type).all()
+        return equipments
     except Exception as exx:
         print(exx)
         return None

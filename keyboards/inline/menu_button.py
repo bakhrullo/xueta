@@ -50,19 +50,28 @@ async def phone_keyboard(lang):
 async def user_menu(lang):
     keyboard = ReplyKeyboardMarkup(row_width=2, resize_keyboard=True, one_time_keyboard=False)
     categories = Category.objects.all()
-    text = ""
+    text = []
     for category in categories:
         if lang == "uz":
-            text = "Eng yaqin manzillar"
+            text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi"]
             keyboard.insert(KeyboardButton(text=category.name_uz))
         if lang == "en":
-            text = "Nearest addresses"
+            text = ["Nearest addresses", "Settings", "Exchange rates"]
             keyboard.insert(KeyboardButton(text=category.name_en))
         if lang == "ru":
-            text = "Самые близкие адреса"
+            text = ["Самые близкие адреса", "Настройки", "Курсы обмена"]
             keyboard.insert(KeyboardButton(text=category.name_ru))
-    key1 = KeyboardButton(text=f"{text}")
-    keyboard.row(key1)
+    if lang == "uz":
+        text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi"]
+    if lang == "en":
+        text = ["Nearest addresses", "Settings", "Exchange rates"]
+    if lang == "ru":
+        text = ["Самые близкие адреса", "Настройки", "Курсы обмена"]
+    key1 = KeyboardButton(text=f"{text[0]}")
+    key2 = KeyboardButton(text=f"{text[2]}")
+    key3 = KeyboardButton(text=f"{text[1]}")
+    keyboard.row(key1, key2)
+    keyboard.row(key3)
     return keyboard
 
 async def back_keyboard(lang):
@@ -153,8 +162,7 @@ async def product_categories(lang):
             keyboard.insert(KeyboardButton(text=category.name_ru))
             texts = ["Назад", "Главное меню"]
     key1 = KeyboardButton(text=f"🏠 {texts[1]}")
-    key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
-    keyboard.add(key1, key2)
+    keyboard.add(key1)
     return keyboard
 
 
