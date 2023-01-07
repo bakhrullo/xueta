@@ -47,7 +47,7 @@ def get_lang(user_id):
 
 @sync_to_async
 def get_loader_equipments(type, region):
-    print(LoaderEquipment.objects.all()[0].type)
+#    print(LoaderEquipment.objects.all()[0].type)
     try:
         region = Region.objects.get(id=region)
         equipments = LoaderEquipment.objects.filter(region=region, type=type).all()

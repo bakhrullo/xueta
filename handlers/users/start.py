@@ -14,6 +14,8 @@ import requests
 from docx import Document
 from docx2pdf import convert
 from get_valute import valyuta_kurslari
+import os
+
 
 def isValid(s):
     Pattern = re.compile("(0|91)?[7-9][0-9]{9}")
@@ -27,7 +29,7 @@ def send_sms(otp, phone):
     username = 'foodline'
     password = 'JvYkp44)-J&9'
     sms_data = {
-        "messages":[{"recipient":f"{phone}","message-id":"abc000000003","sms":{"originator": "3700","content": {"text": f"Ваш код подтверждения для BEST BROCK BOT: {otp}"}}}]}
+        "messages":[{"recipient":f"{phone}","message-id":"abc000000003","sms":{"originator": "3700","content": {"text": f"Ваш код подтверждения для BEST BROK BOT: {otp}"}}}]}
     url = "http://91.204.239.44/broker-api/send"
     res = requests.post(url=url, headers={}, auth=(username, password), json=sms_data)
     print(res)
@@ -721,7 +723,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             await call.message.edit_text(text="Пожалуйста, выберите тип услуги 👇", reply_markup=markup)
         await state.set_state('get_equipment_type')
     else:
-        await call.message.delete()
+#        await call.message.delete()
         data = await state.get_data()
         region_id = command
         equipment_type = data["equipment_type"]
@@ -730,7 +732,8 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         print(equipments)
         text = ""
         i = 1
-        if equipments is not None:
+        if equipments:
+            await call.message.delete()
             for equipment in equipments:
                 if lang == "uz":
                     text += f"{i}) {equipment.name_uz}.\n\n"     
@@ -1298,7 +1301,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
                 await message.answer("Информация получена. Хотите заказать звонок для консультации 👇", reply_markup=markup)
             await state.set_state("get_import_phone")
             document.save(f'offer.docx')
-            convert("offer.docx")
+            os.system("abiword --to=pdf" +str(" ") + "offer.docx")
             doc = open('./offer.pdf', 'rb')
             await bot.send_document(chat_id=-838866316, document=doc, caption=f"Imort uchun")
         else:
@@ -1427,7 +1430,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         export_country = message.text
         document = Document()
         user = await get_user(message.from_user.id)
-        document.add_heading(f'Import uchun', 0)
+        document.add_heading(f'Export uchun', 0)
         document.add_paragraph(f"Mijoz: {user.name}                 Telefon: {user.phone}")
         document.add_paragraph(f"Firma: {user.company}")
         document.add_paragraph(f"Biznes sohasi: {user.product_category.name_uz}")
@@ -1445,7 +1448,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         await state.set_state("get_export_phone")
         await state.set_state("get_category")
         document.save(f'offer.docx')
-        convert("offer.docx")
+        os.system("abiword --to=pdf" +str(" ") + "offer.docx")
         doc = open('./offer.pdf', 'rb')
         await bot.send_document(chat_id=-838866316, document=doc, caption=f"Export uchun")
            
