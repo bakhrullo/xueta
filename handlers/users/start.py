@@ -812,8 +812,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
                 text += f"\n\n{i})Тип: {loader.type_ru}\n  Телефон: {loader.phone}\n  Тонны{loader.tonnas}"
             i += 1
         markup = await back_keyboard(lang)
-        await bot.send_message(chat_id=call.from_user.id, text=text, reply_markup=markup)
-
+        try:
+            await bot.send_message(chat_id=call.from_user.id, text=text, reply_markup=markup)
+        except:
+            await bot.send_message(chat_id=call.from_user.id, text=text[:4000], reply_markup=markup)
+            
 
 @dp.callback_query_handler(state="get_equipment_region")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):
