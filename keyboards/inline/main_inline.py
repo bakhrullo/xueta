@@ -30,6 +30,32 @@ async def customs_keyboard(lang):
     return markup
 
 
+async def posts_keyboard(lang, region):
+    posts = PostService.objects.filter(region__id=region).all()
+    markup = InlineKeyboardMarkup(row_width=2)
+    text_back = ''
+    for i in posts:
+        if lang == "uz":
+            text_back = "Ortga"
+            markup.insert(InlineKeyboardButton(text=f"{i.name_uz}", callback_data=i.id))
+        if lang == "en":
+            text_back = "Back"
+            markup.insert(InlineKeyboardButton(text=f"{i.name_en}", callback_data=i.id))
+        if lang == "ru":
+            text_back = "Назад"
+            markup.insert(InlineKeyboardButton(text=f"{i.name_ru}", callback_data=i.id))
+    if lang == "uz":
+        text_back = "Ortga"
+        markup.add(InlineKeyboardButton(text=f"🔙 {text_back}", callback_data=f"back"))
+    if lang == "en":
+        text_back = "Back"
+        markup.add(InlineKeyboardButton(text=f"🔙 {text_back}", callback_data=f"back"))
+    if lang == "ru":
+        text_back = "Назад"
+        markup.add(InlineKeyboardButton(text=f"🔙 {text_back}", callback_data=f"back"))
+    return markup
+
+
 async def region_keyboard(lang):
     regions = await get_regions()
     markup = InlineKeyboardMarkup(row_width=2)

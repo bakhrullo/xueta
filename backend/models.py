@@ -103,15 +103,15 @@ class Wearhouse(models.Model):
 
 
 class LoaderService(models.Model):
-    name_uz = models.CharField(max_length=500, null=True, blank=True)
-    name_en = models.CharField(max_length=500, null=True, blank=True)
-    name_ru = models.CharField(max_length=500, null=True, blank=True)
-    description_uz = models.TextField(max_length=5000, null=True, blank=True)
-    description_en = models.TextField(max_length=5000, null=True, blank=True)
-    description_ru = models.TextField(max_length=5000, null=True, blank=True)
+    phone = models.CharField(max_length=500, null=True, blank=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
+    tonnas = models.TextField(max_length=5000, null=True, blank=True)
+    type_uz = models.TextField(max_length=5000, null=True, blank=True)
+    type_en = models.TextField(max_length=5000, null=True, blank=True)
+    type_ru = models.TextField(max_length=5000, null=True, blank=True)
 
     def __str__(self):
-        return self.name_uz
+        return self.phone
 
 
 class LoaderEquipment(models.Model):
@@ -169,9 +169,17 @@ class PostService(models.Model):
     name_uz = models.CharField(max_length=500, null=True, blank=True)
     name_en = models.CharField(max_length=500, null=True, blank=True)
     name_ru = models.CharField(max_length=500, null=True, blank=True)
+    legalname_uz = models.CharField(max_length=500, null=True, blank=True)
+    legalname_en = models.CharField(max_length=500, null=True, blank=True)
+    legalname_ru = models.CharField(max_length=500, null=True, blank=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
     description_uz = models.TextField(max_length=5000, null=True, blank=True)
     description_en = models.TextField(max_length=5000, null=True, blank=True)
     description_ru = models.TextField(max_length=5000, null=True, blank=True)
+    address_uz = models.TextField(max_length=5000, null=True, blank=True)
+    address_en = models.TextField(max_length=5000, null=True, blank=True)
+    address_ru = models.TextField(max_length=5000, null=True, blank=True)
+    contacts = models.TextField(max_length=5000, null=True, blank=True)
 
     def __str__(self):
         return self.name_uz
