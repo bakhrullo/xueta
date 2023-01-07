@@ -6,14 +6,21 @@ from math import isnan
 
 
 def add_data(): 
-    dfUz = pd.read_excel('pochtaUz.xlsx')
-    dfEn = pd.read_excel('pochtaEn.xlsx')
-    dfRu = pd.read_excel('pochtaRu.xlsx')
-    print(dfUz["Telefon nomer"][14])
-
-    # for i in dfUz.index:
-    #     print(dfUz["Brend nomi"][i])
-    #     print(dfRu["Telefon nomer"][i])
+    dfUz = pd.read_excel('avtokranToshUz.xlsx')
+    dfEn = pd.read_excel('avtokranToshEn.xlsx')
+    dfRu = pd.read_excel('avtokranToshRu.xlsx')
+    for i in dfUz.index:
+        if dfRu["Телефон номер"][i]:
+            region = Region.objects.get(name_uz="Toshken viloyati")
+            loader_service = LoaderService.objects.create(
+                phone = dfRu["Телефон номер"][i],
+                tonnas = dfRu["Тоннa"][i],
+                region = region,
+                type_uz = "Avtokran",
+                type_en = dfEn["Autocrane"][i],
+                type_ru = dfRu["Автокран"][i],
+            )
+            loader_service.save()
 
 @sync_to_async
 def add_user(user_id, referal_user=None):
@@ -85,13 +92,22 @@ def get_region(region_id):
     except Exception as exx:
         print(exx)
         return None
+
+
 @sync_to_async
-
-
 def get_wearhouse(id):
     try:
         wearhouse = Wearhouse.objects.filter(id=id).first()
         return wearhouse
+    except Exception as exx:
+        print(exx)
+        return None
+
+@sync_to_async
+def get_post(id):
+    try:
+        post = PostService.objects.filter(id=id).first()
+        return post
     except Exception as exx:
         print(exx)
         return None
@@ -111,6 +127,16 @@ def get_wearhouse_by_region(region_id):
 def get_region_wearhouses(region_id):
     try:
         wearhouses = Wearhouse.objects.filter(region__id=region_id).all()
+        return len(wearhouses)
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_region_posts(region_id):
+    try:
+        wearhouses = PostService.objects.filter(region__id=region_id).all()
         return len(wearhouses)
     except Exception as exx:
         print(exx)
@@ -138,9 +164,9 @@ def get_equipments(type):
 
 
 @sync_to_async
-def get_loaders():
+def get_loaders(region):
     try:
-        loaders = LoaderService.objects.all()
+        loaders = LoaderService.objects.filter(region__id=region).all()
         return loaders
     except Exception as exx:
         print(exx)
