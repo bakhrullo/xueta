@@ -361,17 +361,20 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await state.set_state("get_company_name")
     if message.text in ["TIF bojxona ro'yxati", "TIF customs list", "Тифозный таможенный список"]:
         back_key = await back_to_keyboard(lang)
-        markup = await customs_keyboard(lang)
+        markup = await region_keyboard(lang)
         if lang == "uz":
-            await message.answer("TIF bojxona ro'yxati:", reply_markup=back_key)
-            await message.answer("Kerakli bo'limni tanlang 👇", reply_markup=markup)
+            await message.answer(".", reply_markup=back_key)
+            await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+            await message.answer("Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await message.answer("TIF customs list:", reply_markup=back_key)
-            await message.answer("Select the desired section 👇", reply_markup=markup)
+            await message.answer(".", reply_markup=back_key)
+            await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+            await message.answer("Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await message.answer("Таможенный список брюшного тифа:", reply_markup=markup)
-            await message.answer("Выберите нужный раздел 👇", reply_markup=back_key)
-        await state.set_state("get_tif") 
+            await message.answer(".", reply_markup=back_key)
+            await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+            await message.answer("Выберите нужный регион 👇", reply_markup=markup)
+        await state.set_state("get_customs_region")
     if message.text in ["Yuk xizmatlari", "Freight services", "Грузовые услуги"]:
         markup = await freight_keyboard(lang)
         back_key = await back_to_keyboard(lang)
@@ -436,6 +439,29 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     lang = await get_lang(call.from_user.id)
     command = call.data
     if command == "back":
+        markup = await region_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup)
+        await state.set_state("get_customs_region") 
+    else:
+        customs = await get_one_customs(call.data)
+        if lang == "uz":
+            await call.message.edit_text(customs.description_uz)
+        if lang == "en":
+            await call.message.edit_text(customs.description_en)
+        if lang == "ru":
+            await call.message.edit_text(customs.description_ru)
+
+
+@dp.callback_query_handler(state="get_customs_region")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
         await call.message.delete()
         markup = await user_menu(lang)
         if lang == "uz":
@@ -446,14 +472,8 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             await bot.send_message(chat_id=call.from_user.id, text="Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
         await state.set_state('get_category')
     else:
-        customs = await get_one_customs(call.data)
-        if lang == "uz":
-            await call.message.edit_text(customs.description_uz)
-        if lang == "en":
-            await call.message.edit_text(customs.description_en)
-        if lang == "ru":
-            await call.message.edit_text(customs.description_ru)
-
+        region = await get_region(call.data)
+        
 
 @dp.callback_query_handler(state="get_post_region")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):

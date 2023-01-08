@@ -4,8 +4,8 @@ from backend.models import *
 from utils.db_api.database import *
 
 
-async def customs_keyboard(lang):
-    customs = await get_all_customs()
+async def customs_keyboard(lang, region):
+    customs = await Customs.objects.filter(region__id=region).all()
     markup = InlineKeyboardMarkup(row_width=2)
     text_back = ''
     for i in customs:

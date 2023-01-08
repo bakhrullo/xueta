@@ -63,6 +63,15 @@ class User(models.Model):
         except:
             return str(self.user_id)
 
+
+class Region(models.Model):
+    name_uz = models.CharField(max_length=500, null=True, blank=True)
+    name_en = models.CharField(max_length=500, null=True, blank=True)
+    name_ru = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        return self.name_uz
+
     
 class Customs(models.Model):
     name_uz = models.CharField(max_length=500, null=True, blank=True)
@@ -71,17 +80,9 @@ class Customs(models.Model):
     description_uz = models.TextField(max_length=5000, null=True, blank=True)
     description_en = models.TextField(max_length=5000, null=True, blank=True)
     description_ru = models.TextField(max_length=5000, null=True, blank=True)
+    region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
     longitude = models.CharField(max_length=500, null=True, blank=True)
     latitude = models.CharField(max_length=500, null=True, blank=True)
-
-    def __str__(self):
-        return self.name_uz
-
-
-class Region(models.Model):
-    name_uz = models.CharField(max_length=500, null=True, blank=True)
-    name_en = models.CharField(max_length=500, null=True, blank=True)
-    name_ru = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.name_uz
@@ -95,6 +96,9 @@ class Wearhouse(models.Model):
     description_en = models.TextField(max_length=5000, null=True, blank=True)
     description_ru = models.TextField(max_length=5000, null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
+    address_uz = models.TextField(max_length=5000, null=True, blank=True)
+    address_en = models.TextField(max_length=5000, null=True, blank=True)
+    address_ru = models.TextField(max_length=5000, null=True, blank=True)
     longitude = models.CharField(max_length=500, null=True, blank=True)
     latitude = models.CharField(max_length=500, null=True, blank=True)
 
@@ -180,6 +184,8 @@ class PostService(models.Model):
     address_en = models.TextField(max_length=5000, null=True, blank=True)
     address_ru = models.TextField(max_length=5000, null=True, blank=True)
     contacts = models.TextField(max_length=5000, null=True, blank=True)
+    longitude = models.CharField(max_length=500, null=True, blank=True)
+    latitude = models.CharField(max_length=500, null=True, blank=True)
 
     def __str__(self):
         return self.name_uz
