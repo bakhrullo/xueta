@@ -53,25 +53,26 @@ async def user_menu(lang):
     text = []
     for category in categories:
         if lang == "uz":
-            text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi"]
+            text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi", "Kutubxona"]
             keyboard.insert(KeyboardButton(text=category.name_uz))
         if lang == "en":
-            text = ["Nearest addresses", "Settings", "Exchange rates"]
+            text = ["Nearest addresses", "Settings", "Exchange rates", "Library"]
             keyboard.insert(KeyboardButton(text=category.name_en))
         if lang == "ru":
-            text = ["Самые близкие адреса", "Настройки", "Курсы обмена"]
+            text = ["Самые близкие адреса", "Настройки", "Курсы обмена", "Библиотека"]
             keyboard.insert(KeyboardButton(text=category.name_ru))
     if lang == "uz":
-        text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi"]
+        text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi", "Kutubxona"]
     if lang == "en":
-        text = ["Nearest addresses", "Settings", "Exchange rates"]
+        text = ["Nearest addresses", "Settings", "Exchange rates", "Library"]
     if lang == "ru":
-        text = ["Самые близкие адреса", "Настройки", "Курсы обмена"]
+        text = ["Самые близкие адреса", "Настройки", "Курсы обмена", "Библиотека"]
     key1 = KeyboardButton(text=f"{text[0]}")
     key2 = KeyboardButton(text=f"{text[2]}")
+    key4 = KeyboardButton(text=f"{text[3]}")
     key3 = KeyboardButton(text=f"{text[1]}")
     keyboard.row(key1, key2)
-    keyboard.row(key3)
+    keyboard.row(key4, key3)
     return keyboard
 
 async def back_keyboard(lang):
@@ -122,6 +123,26 @@ async def get_phone_keyboard(lang):
     # key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
     keyboard.add(key3, key4)
     keyboard.add(key1)
+    keyboard.resize_keyboard = True
+    return keyboard
+
+
+async def get_company_monthly(lang):
+    texts = []
+    if lang == "uz":
+        texts = ["Orqaga", "t.",]
+    elif lang == "en":
+        texts = ["Back", "t."]
+    elif lang == "ru":
+        texts = ["Назад", "т."]
+
+    keyboard = ReplyKeyboardMarkup()
+    key1 = KeyboardButton(text=f"0-25 {texts[1]}")
+    key3 = KeyboardButton(text=f"25-50 {texts[1]}")
+    key4 = KeyboardButton(text=f"50-100 {texts[1]}")
+    key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
+    keyboard.add(key1, key3, key4)
+    keyboard.add(key2)
     keyboard.resize_keyboard = True
     return keyboard
 

@@ -6,22 +6,35 @@ from math import isnan
 
 
 def add_data(): 
-    dfUz = pd.read_excel('avtokranToshUz.xlsx')
-    dfEn = pd.read_excel('avtokranToshEn.xlsx')
-    dfRu = pd.read_excel('avtokranToshRu.xlsx')
+    dfUz = pd.read_excel('tif2.xlsx')
+    dfEn = pd.read_excel('tifEn.xlsx')
+    dfRu = pd.read_excel('tifRu.xlsx')
     for i in dfUz.index:
-        if dfRu["Телефон номер"][i]:
-            region = Region.objects.get(name_uz="Toshken viloyati")
-            loader_service = LoaderService.objects.create(
-                phone = dfRu["Телефон номер"][i],
-                tonnas = dfRu["Тоннa"][i],
-                region = region,
-                type_uz = "Avtokran",
-                type_en = dfEn["Autocrane"][i],
-                type_ru = dfRu["Автокран"][i],
-            )
-            loader_service.save()
-
+        name_ru = ""
+        name_en = ""
+        address_ru = ""
+        address_en = ""
+        region = ""
+        regions = Region.objects.all()
+        for reg in regions:
+            if reg.name_uz in dfUz["Manzil"][i]:
+                region = reg
+        for j in dfEn.index:
+            if not isnan(dfEn["Post code"][j]) and int(dfUz["Post Kodi"][i]) == int(dfEn["Post code"][j]):
+                print(dfEn["Post code"][j])
+                name_ru = dfRu["Название постов УГТК Республики Узбекистан"][j]
+                name_en = dfEn["Name of posts of territorial departments of the state Customs Committee of the Republic of Uzbekistan"][j]
+                custom = Customs.objects.create(
+                    name_uz=dfUz["Nomi"][i],
+                    name_ru=name_ru,
+                    name_en=name_en,
+                    region=region,
+                    longitude=dfUz["lon"][i],
+                    latitude=dfUz["lat"][i],
+                    contact=dfUz["Telefon"][i]
+                )
+                custom.save()
+        
 @sync_to_async
 def add_user(user_id, referal_user=None):
     try:
@@ -124,6 +137,16 @@ def get_wearhouse_by_region(region_id):
 
 
 @sync_to_async
+def get_customs_by_region(region):
+    try:
+        customss = Customs.objects.filter(region__id=region).all()
+        return customss
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
 def get_region_wearhouses(region_id):
     try:
         wearhouses = Wearhouse.objects.filter(region__id=region_id).all()
@@ -213,3 +236,81 @@ def get_adresses():
         }
         data.append(d)
     return data
+
+
+@sync_to_async
+def get_sertification_max_page():
+    try:
+        return len(Sertification.objects.all()) // 10 + 1
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_sertification_count():
+    try:
+        return len(Sertification.objects.all())
+    except Exception as exx:
+        print(exx)
+        return None
+    
+    
+@sync_to_async
+def get_sertification(id):
+    try:
+        sert = Sertification.objects.get(id=id)
+        return sert
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_by_tonna(tonna, region):
+    try:
+        min = int(tonna.split("-")[0])
+        max = int(tonna.split("-")[1])
+        data = []
+        services = LogisticService.objects.filter(region__id=region).all()
+        for service in services:
+            try:
+                if int(service.tonna) >= min and int(service.tonna) <= max:
+                    data.append(service)
+                else:
+                    continue
+            except Exception as exx:
+                continue
+        return data
+    except Exception as exx:
+        print(exx)
+        return None
+
+    
+@sync_to_async
+def logistic_pagination(page, data):
+    try:
+        objects = data[(int(page)-1) * 15 : int(page) * 15]
+        return objects
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_logistic_service_max_page(data):
+    try:
+        return len(data) // 15 + 1
+    except Exception as exx:
+        print(exx)
+        return None
+
+
+@sync_to_async
+def get_tenved(kod):
+    try:
+        tenved = TnVed.objects.get(kod=kod)
+        return tenved
+    except Exception as exx:
+        print(exx)
+        return None
