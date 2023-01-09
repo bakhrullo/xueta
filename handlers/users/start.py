@@ -14,16 +14,12 @@ import requests
 from docx import Document
 from docx2pdf import convert
 from get_valute import valyuta_kurslari
-import os
-
 
 def isValid(s):
     Pattern = re.compile("(0|91)?[7-9][0-9]{9}")
     return Pattern.match(s)
 
 
-username = "zoneagency"
-password = "j2e4AEFs84"
 
 def send_sms(otp, phone):
     username = 'foodline'
@@ -294,6 +290,10 @@ async def get_service_category(message: types.Message, state: FSMContext):
         elif lang == "ru":
             await message.answer(text="Выберите нужную команду 👇", reply_markup=markup)
         await state.set_state("settings")
+    elif message.text in ["Библиотека", "Kutubxona", "Library"]:
+        doc = open("./qaror.pdf", 'rb')
+        markup = await user_menu(lang)
+        await message.answer_document(document=doc, reply_markup=markup)
     elif message.text in ["Valyutalar kursi", "Exchange rates", "Курсы обмена"]:
         markup = await user_menu(lang)
         kurslar = valyuta_kurslari()
@@ -432,29 +432,123 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_post_region")                                      
+    if message.text in ["Sertifikatlash", "Certification", "Сертификация"]:
+        back_key = await back_to_keyboard(lang)
+        await state.update_data(page=1)
+        max_data = await get_sertification_count()
+        markup = await sertification_keyboard(lang=lang, page=1)
+        if lang == "uz":
+            await message.answer(".", reply_markup=back_key)
+            await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+            await message.answer(f"Jami ma'lumotlar {max_data} ta. Kerakli Sertifikatlar idorasini tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await message.answer(".", reply_markup=back_key)
+            await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+            await message.answer("Total data in {max_data}. Select the desired Certificate Authority 👇", reply_markup=markup)
+        if lang == "ru":
+            await message.answer(".", reply_markup=back_key)
+            await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+            await message.answer("Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup)
+        await state.set_state("sertification")
+    if message.text in ["TIF VD", "TENV ED", "ТЭНВ ЕД"]:
+        markup = await back_keyboard(lang)
+        if lang == "uz":
+            await message.answer("TIF VD kodngizni kiriting va u xaqda ma'lumot oling. \n\nMisol uchun 👇\n7004201000, 6102109000", reply_markup=markup)
+        if lang == "en":
+            await message.answer("Enter your TIF VD code and get information about it. \n\nFor example 👇\n7004201000, 6102109000", reply_markup=markup)
+        if lang == "ru":
+            await message.answer("Введите свой код ТЭНВ ЕД и получите информацию о нем. \n\nНапример 👇\n7004201000, 6102109000", reply_markup=markup)
+        await state.set_state("get_tenved")
+     
 
+@dp.message_handler(state="get_tenved", content_types=types.ContentTypes.TEXT)
+async def get_service_category(message: types.Message, state: FSMContext):
+    lang = await get_lang(message.from_user.id)
+    tenved = await get_tenved(message.text)
+    if tenved is not None:
+        markup = await back_keyboard(lang)
+        if lang == "uz":
+            await message.answer(f"{tenved.description_uz}", reply_markup=markup)
+        if lang == "en":
+            await message.answer(f"{tenved.description_en}", reply_markup=markup)
+        if lang == "ru":
+            await message.answer(f"{tenved.description_uz}", reply_markup=markup)
+    else:
+        markup = await back_keyboard(lang)
+        if lang == "uz":
+            await message.answer("Ma'lumot topilmadi TIF VD kodngizni qayta kiriting. \n\nMisol uchun 👇\n7004201000, 6102109000", reply_markup=markup)
+        if lang == "en":
+            await message.answer("Information not found. Re-enter your TIF VD code. \n\nFor example 👇\n7004201000, 6102109000", reply_markup=markup)
+        if lang == "ru":
+            await message.answer("Информация не найдена. Повторно введите код TIF VD. \n\nНапример 👇\n7004201000, 6102109000", reply_markup=markup)
+        await state.set_state("get_tenved")
+        
+        
 
-@dp.callback_query_handler(state="get_tif")
+@dp.callback_query_handler(state="sertification")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):
     lang = await get_lang(call.from_user.id)
+    state_data = await state.get_data()
     command = call.data
+    this_page = state_data['page']
+    page = 0
     if command == "back":
-        markup = await region_keyboard(lang)
+        await call.message.delete()
+        markup = await user_menu(lang)
         if lang == "uz":
-            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup)
-        if lang == "en":
-            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup)
-        if lang == "ru":
-            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup)
-        await state.set_state("get_customs_region") 
+            await bot.send_message(chat_id=call.from_user.id, text="Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+        elif lang == "en":
+            await bot.send_message(chat_id=call.from_user.id, text="Choose the section you want 👇", reply_markup=markup)
+        elif lang == "ru":
+            await bot.send_message(chat_id=call.from_user.id, text="Пожалуйста, выберите нужный раздел 👇", reply_markup=markup)
+        await state.set_state('get_category')
+    elif command == "next_page":
+        max_page = await get_sertification_max_page()
+        if int(this_page) == max_page:
+            page = 1
+        else:
+            page = int(this_page) + 1
+        markup = await sertification_keyboard(page=page, lang=lang)
+        await call.message.edit_reply_markup(reply_markup=markup)
+        await state.update_data(page=page)
+    elif command == "last_page":
+        max_page = await get_sertification_max_page()
+        if int(this_page) == 1:
+            page = max_page
+        else:
+            page = int(this_page) - 1
+        markup = await sertification_keyboard(page=page, lang=lang)
+        await call.message.edit_reply_markup(reply_markup=markup)
+        await state.update_data(page=page)
     else:
-        customs = await get_one_customs(call.data)
+        sert = await get_sertification(command)
+        markup = await back(lang)
         if lang == "uz":
-            await call.message.edit_text(customs.description_uz)
+            await call.message.edit_text(text=f"{sert.legalname_uz}\n\n{sert.address_uz}\n\n{sert.contacts}\n\n", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(customs.description_en)
+            await call.message.edit_text(text=f"{sert.legalname_en}\n\n{sert.address_en}\n\n{sert.contacts}\n\n", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(customs.description_ru)
+            await call.message.edit_text(text=f"{sert.legalname_ru}\n\n{sert.address_ru}\n\n{sert.contacts}\n\n", reply_markup=markup)
+        await state.set_state("get_sertificate")
+
+
+@dp.callback_query_handler(state="get_sertificate")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    state_data = await state.get_data()
+    command = call.data
+    this_page = state_data['page']
+    max_data = await get_sertification_count()
+    page = 0
+    if command == "back":
+        markup = await sertification_keyboard(lang=lang, page=int(this_page))
+        if lang == "uz":
+            await call.message.edit_text(text=f"Jami ma'lumotlar {max_data} ta. Kerakli Sertifikatlash idorasini tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text(text="Total data in {max_data}. Select the desired Certificate Authority 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text(text=f"Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup)        
+        await state.set_state('sertification')
 
 
 @dp.callback_query_handler(state="get_customs_region")
@@ -473,8 +567,62 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         await state.set_state('get_category')
     else:
         region = await get_region(call.data)
-        
+        await state.update_data(region=call.data)
+        markup = await customs_keyboard(lang=lang, region=call.data)
+        if lang == "uz":
+            await call.message.edit_text(text=f"{region.name_uz}dagi TIF bojxonalari 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text(text="TIF customs offices in {region.name_en} 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text(text=f"Таможенные посты TIF в {region.name_ru} 👇", reply_markup=markup)        
+        await state.set_state("get_tif")
 
+
+@dp.callback_query_handler(state="get_tif")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        markup = await region_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup)
+        await state.set_state("get_customs_region") 
+    else:
+        await call.message.delete()
+        customs = await get_one_customs(call.data)
+        await bot.send_location(chat_id=call.from_user.id, longitude=customs.longitude, latitude=customs.latitude)
+        markup = await back(lang)
+        if lang == "uz":
+            await bot.send_message(chat_id=call.from_user.id, text=f"{customs.name_uz}\n{customs.contact}", reply_markup=markup)
+        if lang == "en":
+            await bot.send_message(chat_id=call.from_user.id, text=f"{customs.name_en}\n{customs.contact}", reply_markup=markup)
+        if lang == "ru":
+            await bot.send_message(chat_id=call.from_user.id, text=f"{customs.name_ru}\n{customs.contact}", reply_markup=markup)
+        await state.set_state("custom")
+
+
+@dp.callback_query_handler(state="custom")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        data = await state.get_data()
+        region_id = data["region"]
+        region = await get_region(region_id)
+        markup = await customs_keyboard(lang=lang, region=region_id)
+        if lang == "uz":
+            await call.message.edit_text(text=f"{region.name_uz}dagi TIF bojxonalari 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text(text="TIF customs offices in {region.name_en} 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text(text=f"Таможенные посты TIF в {region.name_ru} 👇", reply_markup=markup)        
+        await state.set_state("get_tif")
+        
+        
 @dp.callback_query_handler(state="get_post_region")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):
     lang = await get_lang(call.from_user.id)
@@ -657,7 +805,7 @@ async def get_locations(message: types.Message, state: FSMContext):
     closect_wearhouse = closest(data=data, location=user_location)
     wearhouse = await get_wearhouse(closect_wearhouse['id'])
     if lang == "uz":
-        await message.answer(text=f"Sizga eng yaqin bo'lgan omorxona\n\n {wearhouse.name_uz}\n\n{wearhouse.description_uz}")
+        await message.answer(text=f"Sizga eng yaqin bo'lgan omborxona\n\n {wearhouse.name_uz}\n\n{wearhouse.description_uz}")
     if lang == "en":
         await message.answer(text=f"Your nearest warehouse\n\n{wearhouse.name_en}\n\n{wearhouse.description_en}")
     if lang == "ru":
@@ -740,18 +888,163 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_loader_region")
     if command == "shipping":
-            markup = await freight_keyboard(lang)
-            await call.message.delete()
-            if lang == 'uz':
-                text += f"Ma'lumotlar to'dirilmoqda.\n\nKerakli bo'limni tanlang"
-            if lang == 'en':
-                text += f"Loading data\n\n"
-            if lang == 'ru':
-                text += f"Данные заполняются\n\nВыберите нужный раздел"
-            await bot.send_message(call.from_user.id, text=text, reply_markup=markup)
-            await state.set_state("get_freight_service")            
-            
+        text = ""
+        markup = await logistics_keyboard(lang)
+        if lang == 'uz':
+            text += f"Kerakli xizmat turni tanlang 👇"
+        if lang == 'en':
+            text += f"Choose the type of service you need 👇"
+        if lang == 'ru':
+            text += f"Выберите тип услуги, который вам нужен 👇"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.set_state("get_logistics_service")
 
+
+@dp.callback_query_handler(state="get_logistics_service")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        markup = await freight_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup)
+        await state.set_state("get_freight_service")
+    elif command == "internal":
+        markup = await region_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text("Select the desired region 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup)
+        await state.set_state("get_logistics_region")
+
+
+@dp.callback_query_handler(state="get_logistics_region")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        text = ""
+        markup = await logistics_keyboard(lang)
+        if lang == 'uz':
+            text += f"Kerakli xizmat turni tanlang 👇"
+        if lang == 'en':
+            text += f"Choose the type of service you need 👇"
+        if lang == 'ru':
+            text += f"Выберите тип услуги, который вам нужен 👇"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.set_state("get_logistics_service")
+    else:
+        await state.update_data(region=call.data)
+        text = ""
+        markup = await tonna_keyboard(lang)
+        if lang == 'uz':
+            text += f"Kerakli og'irlikni tanlang(tonnalarda) tanlang 👇"
+        if lang == 'en':
+            text += f"Select the desired weight (in tons) 👇"
+        if lang == 'ru':
+            text += f"Выберите нужный вес (в тоннах) 👇"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.set_state("get_logistics_tonna")                       
+
+
+@dp.callback_query_handler(state="get_logistics_tonna")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    command = call.data
+    if command == "back":
+        markup = await region_keyboard(lang)
+        if lang == "uz":
+            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await call.message.edit_text("Select the desired region 👇", reply_markup=markup)
+        if lang == "ru":
+            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup)
+        await state.set_state("get_loader_region")
+    else:
+        state_data = await state.get_data()
+        region = state_data['region']
+        services = await get_by_tonna(tonna=call.data, region=region)
+        await state.update_data(page=1, tonna=call.data)
+        objects = await logistic_pagination(page=1, data=services)
+        text = ""
+        markup = await pagination_keyboard(lang)
+        for object in objects:
+            if lang == "uz":
+                text += f"Turi: {object.type}       Hudud: {object.region.name_uz}\nTelefon: {object.phone}\nTonna: {object.tonna} t.\n\n"
+            if lang == "en":
+                text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
+            if lang == "ru":
+                text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.set_state("logistic_service")
+
+
+@dp.callback_query_handler(state="logistic_service")
+async def get_tif(call: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(call.from_user.id)
+    state_data = await state.get_data()
+    command = call.data
+    this_page = state_data['page']
+    page = 0
+    region = state_data['region']
+    tonna = state_data['tonna']
+    if command == "back":
+        text = ""
+        markup = await tonna_keyboard(lang)
+        if lang == 'uz':
+            text += f"Kerakli og'irlikni tanlang(tonnalarda) tanlang 👇"
+        if lang == 'en':
+            text += f"Select the desired weight (in tons) 👇"
+        if lang == 'ru':
+            text += f"Выберите нужный вес (в тоннах) 👇"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.set_state("get_logistics_tonna")                       
+    elif command == "next_page":
+        objects = await get_by_tonna(tonna=tonna, region=region)
+        max_page = len(objects) // 15 + 1
+        if int(this_page) == max_page:
+            page = 1
+        else:
+            page = int(this_page) + 1
+        objects = await logistic_pagination(page=page, data=objects)
+        text = ""
+        markup = await pagination_keyboard(lang)
+        for object in objects:
+            if lang == "uz":
+                text += f"Turi: {object.type}       Hudud: {object.region.name_uz}\nTelefon: {object.phone}\nTonna: {object.tonna} t.\n\n"
+            if lang == "en":
+                text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
+            if lang == "ru":
+                text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.update_data(page=page)
+    elif command == "last_page":
+        objects = await get_by_tonna(tonna=tonna, region=region)
+        max_page = len(objects) // 15 + 1
+        if int(this_page) == 1:
+            page = max_page
+        else:
+            page = int(this_page) - 1
+        objects = await logistic_pagination(page=page, data=objects)
+        text = ""
+        markup = await pagination_keyboard(lang)
+        for object in objects:
+            if lang == "uz":
+                text += f"Turi: {object.type}       Hudud: {object.region.name_uz}\nTelefon: {object.phone}\nTonna: {object.tonna} t.\n\n"
+            if lang == "en":
+                text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
+            if lang == "ru":
+                text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
+        await call.message.edit_text(text=text, reply_markup=markup)
+        await state.update_data(page=page)
+
+        
 @dp.message_handler(state="loader_service", content_types=types.ContentTypes.TEXT)
 async def loader_service(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
@@ -773,7 +1066,7 @@ async def loader_service(message: types.Message, state: FSMContext):
             await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
         await state.set_state("get_freight_service")
     
-        
+
 @dp.callback_query_handler(state="get_equipment_type")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):
     lang = await get_lang(call.from_user.id)
@@ -825,11 +1118,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         i = 1
         for loader in loaders:
             if lang == "uz":
-                text += f"\n\n{i})Turi: {loader.type_uz}\n   Telefon: {loader.phone}\n   Tonna{loader.tonnas}"
+                text += f"\n\n{i})Turi: {loader.name_uz}\n   Telefon: {loader.phone}\n"
             if lang == "en":
-                text += f"\n\n{i})Type: {loader.type_en}\n  Phone: {loader.phone}\n  Tons{loader.tonnas}"
+                text += f"\n\n{i})Type: {loader.name_en}\n  Phone: {loader.phone}\n"
             if lang == "ru":
-                text += f"\n\n{i})Тип: {loader.type_ru}\n  Телефон: {loader.phone}\n  Тонны{loader.tonnas}"
+                text += f"\n\n{i})Тип: {loader.name_ru}\n  Телефон: {loader.phone}\n"
             i += 1
         markup = await back_keyboard(lang)
         try:
@@ -852,7 +1145,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             await call.message.edit_text(text="Пожалуйста, выберите тип услуги 👇", reply_markup=markup)
         await state.set_state('get_equipment_type')
     else:
-#        await call.message.delete()
+        await call.message.delete()
         data = await state.get_data()
         region_id = command
         equipment_type = data["equipment_type"]
@@ -861,8 +1154,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         print(equipments)
         text = ""
         i = 1
-        if equipments:
-            await call.message.delete()
+        if equipments is not None:
             for equipment in equipments:
                 if lang == "uz":
                     text += f"{i}) {equipment.name_uz}.\n\n"     
@@ -1005,12 +1297,13 @@ async def get_service_category(message: types.Message, state: FSMContext):
         if category is not None:
             user.product_category = category
             user.save()
+            markup = await get_company_monthly(lang)
             if lang == "uz":
-                await message.answer("Firmangiz oylik hajmini kiriting 👇", reply_markup=back_key)
+                await message.answer("Firmangiz oylik aylanmasini (Tonnalarda) tanlang 👇", reply_markup=markup)
             if lang == "en":
-                await message.answer("Enter the monthly turnover of your company 👇", reply_markup=back_key)
+                await message.answer("Select your company's monthly turnover (in Tons) 👇", reply_markup=markup)
             if lang == "ru":
-                await message.answer("Введите месячный оборот вашей компании 👇", reply_markup=back_key)
+                await message.answer("Выберите месячный оборот вашей компании (в тоннах) 👇", reply_markup=markup)
             await state.set_state("get_company_monthly")
         else:
             markup = await product_categories(lang)
@@ -1028,7 +1321,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     back_key = await back_keyboard(lang)
     user = await get_user(message.from_user.id)
-    message_id = await int(message.message_id) + 1
+    message_id = int(message.message_id) + 1
     if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
         markup = await product_categories(lang)
         if lang == "uz":
@@ -1039,124 +1332,115 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await message.answer("Выберите категорию вашей компании 👇", reply_markup=markup)
         await state.set_state('get_product_category')
     else:
-        if message.text.isdigit():
-            user = await get_user(message.from_user.id)
-            user.monthly = int(message.text)
-            user.full = True
-            user.save()
-            data = await state.get_data()
-            command = data ['state']
+        user = await get_user(message.from_user.id)
+        user.monthly = message.text
+        user.full = True
+        user.save()
+        data = await state.get_data()
+        command = data ['state']
+        if lang == "uz":
+            await message.answer("Ma'lumotlar qabul qilindi ✅")
+        if lang == "en":
+            await message.answer("The information has been accepted ✅")
+        if lang == "ru":
+            await message.answer("Данные получены успешно ✅")
+        if command in ["Sozlamalar", "Настройки", "Settings"]:
+            markup = await settings_keyboard(lang)
             if lang == "uz":
-                await message.answer("Ma'lumotlar qabul qilindi ✅")
+                await message.answer(text="Kerakli buyruqni tanlang 👇", reply_markup=markup)
+            elif lang == "en":
+                await message.answer(text="Choose the command you want 👇", reply_markup=markup)
+            elif lang == "ru":
+                await message.answer(text="Выберите нужную команду 👇", reply_markup=markup)
+            await state.set_state("settings")
+        elif command in ["Import", "Импорт"]:
+            if lang == "uz":
+                await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
             if lang == "en":
-                await message.answer("The information has been accepted ✅")
+                await message.answer("Enter the product name 👇", reply_markup=back_key)
             if lang == "ru":
-                await message.answer("Данные получены успешно ✅")
-            if command in ["Sozlamalar", "Настройки", "Settings"]:
-                markup = await settings_keyboard(lang)
-                if lang == "uz":
-                    await message.answer(text="Kerakli buyruqni tanlang 👇", reply_markup=markup)
-                elif lang == "en":
-                    await message.answer(text="Choose the command you want 👇", reply_markup=markup)
-                elif lang == "ru":
-                    await message.answer(text="Выберите нужную команду 👇", reply_markup=markup)
-                await state.set_state("settings")
-            elif command in ["Import", "Импорт"]:
-                if lang == "uz":
-                    await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
-                if lang == "en":
-                    await message.answer("Enter the product name 👇", reply_markup=back_key)
-                if lang == "ru":
-                    await message.answer("Введите название продукта 👇", reply_markup=back_key)
-                await state.set_state("import_product_name")
-            elif command in ["Export", "Экспорт"]:
-                if lang == "uz":
-                    await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
-                if lang == "en":
-                    await message.answer("Enter the product name 👇", reply_markup=back_key)
-                if lang == "ru":
-                    await message.answer("Введите название продукта 👇", reply_markup=back_key)
-                await state.set_state("export_product_name")   
-            elif command in ["Contract", "Kontrakt", "Контракт"]:
-                markup = await kontrakt_keyboard(lang)
-                if lang == "uz":
-                    await message.answer("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
-                if lang == "en":
-                    await message.answer("Choose the type of service you need 👇", reply_markup=markup)
-                if lang == "ru":
-                    await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
-                await state.set_state("get_contract_service")
-            elif command in ["TIF bojxona ro'yxati", "TIF customs list", "Тифозный таможенный список"]:
-                back_key = await back_to_keyboard(lang)
-                markup = await customs_keyboard(lang)
-                if lang == "uz":
-                    await message.answer("TIF bojxona ro'yxati:", reply_markup=back_key)
-                    await message.answer("Kerakli bo'limni tanlang 👇", reply_markup=markup)
-                if lang == "en":
-                    await message.answer("TIF customs list:", reply_markup=back_key)
-                    await message.answer("Select the desired section 👇", reply_markup=markup)
-                if lang == "ru":
-                    await message.answer("Таможенный список брюшного тифа:", reply_markup=markup)
-                    await message.answer("Выберите нужный раздел 👇", reply_markup=back_key)
-                await state.set_state("get_tif") 
-            elif command in ["Yuk xizmatlari", "Freight services", "Грузовые услуги"]:
-                markup = await freight_keyboard(lang)
-                back_key = await back_to_keyboard(lang)
-                if lang == "uz":
-                    await message.answer(".", reply_markup=back_key)
-                    await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-                    await message.answer("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
-                if lang == "en":
-                    await message.answer(".", reply_markup=back_key)
-                    await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-                    await message.answer("Choose the type of service you need 👇", reply_markup=markup)
-                if lang == "ru":
-                    await message.answer(".", reply_markup=back_key)
-                    await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-                    await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
-                await state.set_state("get_freight_service")
-            elif command in ["Omborlar ro'yxati", "Warehouse list", "Список складов"]:
-                back_key = await back_to_keyboard(lang)
-                markup = await region_keyboard(lang)
-                if lang == "uz":
-                    await message.answer(".", reply_markup=back_key)
-                    await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-                    await message.answer("Kerakli viloyatni tanlang 👇", reply_markup=markup)
-                if lang == "en":
-                    await message.answer(".", reply_markup=back_key)
-                    await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-                    await message.answer("Select the desired region 👇", reply_markup=markup)
-                if lang == "ru":
-                    await message.answer(".", reply_markup=back_key)
-                    await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-                    await message.answer("Выберите нужный регион 👇", reply_markup=markup)
-                await state.set_state("get_region")                                      
-            elif command in ["Eng yaqin manzillar", "Nearest addresses", "Самые близкие адреса"]:
-                markup = await location_send(lang)
-                if lang == "uz":
-                    await message.answer("Joylashuv manzilingizni jo'nating 👇", reply_markup=markup)
-                if lang == "en":
-                    await message.answer("Please send your location address 👇", reply_markup=markup)
-                if lang == "ru":
-                    await message.answer("Отправьте свое местоположение 👇", reply_markup=markup)
-                await state.set_state("get_location")
-            else:
-                markup = await user_menu(lang)
-                if lang == "uz":
-                    await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
-                elif lang == "ru":
-                    await message.answer("Выберите нужный раздел👇", reply_markup=markup)
-                elif lang == "en":
-                    await message.answer("Please select the desired section 👇", reply_markup=markup)
-                await state.set_state("get_category")
+                await message.answer("Введите название продукта 👇", reply_markup=back_key)
+            await state.set_state("import_product_name")
+        elif command in ["Export", "Экспорт"]:
+            if lang == "uz":
+                await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
+            if lang == "en":
+                await message.answer("Enter the product name 👇", reply_markup=back_key)
+            if lang == "ru":
+                await message.answer("Введите название продукта 👇", reply_markup=back_key)
+            await state.set_state("export_product_name")   
+        elif command in ["Contract", "Kontrakt", "Контракт"]:
+            markup = await kontrakt_keyboard(lang)
+            if lang == "uz":
+                await message.answer("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer("Choose the type of service you need 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
+            await state.set_state("get_contract_service")
+        elif command in ["TIF bojxona ro'yxati", "TIF customs list", "Тифозный таможенный список"]:
+            back_key = await back_to_keyboard(lang)
+            markup = await customs_keyboard(lang)
+            if lang == "uz":
+                await message.answer("TIF bojxona ro'yxati:", reply_markup=back_key)
+                await message.answer("Kerakli bo'limni tanlang 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer("TIF customs list:", reply_markup=back_key)
+                await message.answer("Select the desired section 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer("Таможенный список брюшного тифа:", reply_markup=markup)
+                await message.answer("Выберите нужный раздел 👇", reply_markup=back_key)
+            await state.set_state("get_tif") 
+        elif command in ["Yuk xizmatlari", "Freight services", "Грузовые услуги"]:
+            markup = await freight_keyboard(lang)
+            back_key = await back_to_keyboard(lang)
+            if lang == "uz":
+                await message.answer(".", reply_markup=back_key)
+                await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+                await message.answer("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer(".", reply_markup=back_key)
+                await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+                await message.answer("Choose the type of service you need 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer(".", reply_markup=back_key)
+                await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+                await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
+            await state.set_state("get_freight_service")
+        elif command in ["Omborlar ro'yxati", "Warehouse list", "Список складов"]:
+            back_key = await back_to_keyboard(lang)
+            markup = await region_keyboard(lang)
+            if lang == "uz":
+                await message.answer(".", reply_markup=back_key)
+                await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+                await message.answer("Kerakli viloyatni tanlang 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer(".", reply_markup=back_key)
+                await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+                await message.answer("Select the desired region 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer(".", reply_markup=back_key)
+                await bot.delete_message(chat_id=message.from_id, message_id=message_id)
+                await message.answer("Выберите нужный регион 👇", reply_markup=markup)
+            await state.set_state("get_region")                                      
+        elif command in ["Eng yaqin manzillar", "Nearest addresses", "Самые близкие адреса"]:
+            markup = await location_send(lang)
+            if lang == "uz":
+                await message.answer("Joylashuv manzilingizni jo'nating 👇", reply_markup=markup)
+            if lang == "en":
+                await message.answer("Please send your location address 👇", reply_markup=markup)
+            if lang == "ru":
+                await message.answer("Отправьте свое местоположение 👇", reply_markup=markup)
+            await state.set_state("get_location")
         else:
+            markup = await user_menu(lang)
             if lang == "uz":
-                await message.answer("Firmangiz oylik aylanmasini raqamlarda kiriting 👇", reply_markup=back_key)
-            if lang == "en":
-                await message.answer("Enter the monthly turnover of your company in numbers 👇", reply_markup=back_key)
-            if lang == "ru":
-                await message.answer("Введите месячный оборот вашей компании в цифрах 👇", reply_markup=back_key)
-            await state.set_state("get_company_monthly")
+                await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+            elif lang == "ru":
+                await message.answer("Выберите нужный раздел👇", reply_markup=markup)
+            elif lang == "en":
+                await message.answer("Please select the desired section 👇", reply_markup=markup)
+            await state.set_state("get_category")
 
 
 @dp.message_handler(content_types=types.ContentTypes.TEXT, state="settings")
@@ -1430,7 +1714,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
                 await message.answer("Информация получена. Хотите заказать звонок для консультации 👇", reply_markup=markup)
             await state.set_state("get_import_phone")
             document.save(f'offer.docx')
-            os.system("abiword --to=pdf" +str(" ") + "offer.docx")
+            convert("offer.docx")
             doc = open('./offer.pdf', 'rb')
             await bot.send_document(chat_id=-838866316, document=doc, caption=f"Imort uchun")
         else:
@@ -1459,11 +1743,11 @@ async def get_import_phone(message: types.Message, state: FSMContext):
         user = await get_user(message.from_user.id)
         await bot.send_message(chat_id=-838866316, text=f"{user.name}\n\nTelefon: {user.phone}\n\n Import shartnomasi uchun")
         if lang == "uz":
-            await message.answer(f"Siz Import shartnomasi uchun qo'ng'iroq buyurtma qildingiz. Kerakli bo'limni tanlang 👇", reply_markup=markup)
+            await message.answer(f"✅ Siz Import shartnomasi uchun qo'ng'iroq buyurtma qildingiz.\n\nBosh menyu. Kerakli bo'limni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await message.answer(f"You have booked a call for Import contract. Select the desired section 👇", reply_markup=markup)
+            await message.answer(f"✅ You have booked a call for Import contract.\n\nMain menu. Select the desired section 👇", reply_markup=markup)
         if lang == "ru":
-            await message.answer(f"Вы забронировали звонок для Импортный контракт. Выберите нужный раздел 👇", reply_markup=markup)
+            await message.answer(f"✅ Вы забронировали звонок для Импортный контракт.\n\nГлавное меню. Выберите нужный раздел 👇", reply_markup=markup)
         await state.set_state("get_category")
     
 
@@ -1483,11 +1767,11 @@ async def get_export_phone(message: types.Message, state: FSMContext):
         user = await get_user(message.from_user.id)
         await bot.send_message(chat_id=-838866316, text=f"Export shartnomasi\n\n{user.name}\n\nTelefon: {user.phone}")
         if lang == "uz":
-            await message.answer(f"Siz Export shartnomasi uchun qo'ng'iroq buyurtma qildingiz. Kerakli bo'limni tanlang 👇", reply_markup=markup)
+            await message.answer(f"Siz Export shartnomasi uchun qo'ng'iroq buyurtma qildingiz.\n\nBosh menyu. Kerakli bo'limni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await message.answer(f"You have booked a call for Export contract. Select the desired section 👇", reply_markup=markup)
+            await message.answer(f"You have booked a call for Export contract.\n\nMain menu. Select the desired section 👇", reply_markup=markup)
         if lang == "ru":
-            await message.answer(f"Вы забронировали звонок для Экспортный контракт. Выберите нужный раздел 👇", reply_markup=markup)
+            await message.answer(f"Вы забронировали звонок для Экспортный контракт.\n\nГлавное меню. Выберите нужный раздел 👇", reply_markup=markup)
         await state.set_state("get_category")
 
             
@@ -1559,7 +1843,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         export_country = message.text
         document = Document()
         user = await get_user(message.from_user.id)
-        document.add_heading(f'Export uchun', 0)
+        document.add_heading(f'Import uchun', 0)
         document.add_paragraph(f"Mijoz: {user.name}                 Telefon: {user.phone}")
         document.add_paragraph(f"Firma: {user.company}")
         document.add_paragraph(f"Biznes sohasi: {user.product_category.name_uz}")
@@ -1577,7 +1861,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         await state.set_state("get_export_phone")
         await state.set_state("get_category")
         document.save(f'offer.docx')
-        os.system("abiword --to=pdf" +str(" ") + "offer.docx")
+        convert("offer.docx")
         doc = open('./offer.pdf', 'rb')
         await bot.send_document(chat_id=-838866316, document=doc, caption=f"Export uchun")
            

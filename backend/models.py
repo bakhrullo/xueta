@@ -54,7 +54,7 @@ class User(models.Model):
     
     company =  models.CharField(max_length=2000, null=True, blank=True)
     product_category = models.ForeignKey(ProductCategory, null=True, on_delete=models.SET_NULL)
-    monthly = models.IntegerField(default=0)
+    monthly = models.CharField(max_length=50, null=True)
     full = models.BooleanField(default=False)
     
     def __str__(self):
@@ -83,6 +83,7 @@ class Customs(models.Model):
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
     longitude = models.CharField(max_length=500, null=True, blank=True)
     latitude = models.CharField(max_length=500, null=True, blank=True)
+    contact = models.CharField(max_length=5000, null=True, blank=True)
 
     def __str__(self):
         return self.name_uz
@@ -109,11 +110,11 @@ class Wearhouse(models.Model):
 class LoaderService(models.Model):
     phone = models.CharField(max_length=500, null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
-    tonnas = models.TextField(max_length=5000, null=True, blank=True)
-    type_uz = models.TextField(max_length=5000, null=True, blank=True)
-    type_en = models.TextField(max_length=5000, null=True, blank=True)
-    type_ru = models.TextField(max_length=5000, null=True, blank=True)
-
+    name_uz = models.CharField(max_length=500, null=True, blank=True)
+    name_en = models.CharField(max_length=500, null=True, blank=True)
+    name_ru = models.CharField(max_length=500, null=True, blank=True)
+    persons = models.CharField(max_length=500, null=True, blank=True)
+    
     def __str__(self):
         return self.phone
 
@@ -141,16 +142,14 @@ class LoaderEquipment(models.Model):
 
 
 class LogisticService(models.Model):
-    name_uz = models.CharField(max_length=500, null=True, blank=True)
-    name_en = models.CharField(max_length=500, null=True, blank=True)
-    name_ru = models.CharField(max_length=500, null=True, blank=True)
+    phone = models.CharField(max_length=500, null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
-    description_uz = models.TextField(max_length=5000, null=True, blank=True)
-    description_en = models.TextField(max_length=5000, null=True, blank=True)
-    description_ru = models.TextField(max_length=5000, null=True, blank=True)
-
+    tonna = models.TextField(max_length=5000, null=True, blank=True)
+    type = models.TextField(max_length=5000, null=True, blank=True)
+    is_international = models.BooleanField(default=False)
+    
     def __str__(self):
-        return self.name_uz
+        return self.phone
 
 
 class Interest(models.Model):
@@ -186,6 +185,22 @@ class PostService(models.Model):
     contacts = models.TextField(max_length=5000, null=True, blank=True)
     longitude = models.CharField(max_length=500, null=True, blank=True)
     latitude = models.CharField(max_length=500, null=True, blank=True)
+
+    def __str__(self):
+        return self.name_uz
+
+
+class Sertification(models.Model):
+    name_uz = models.CharField(max_length=500, null=True, blank=True)
+    name_en = models.CharField(max_length=500, null=True, blank=True)
+    name_ru = models.CharField(max_length=500, null=True, blank=True)
+    legalname_uz = models.CharField(max_length=500, null=True, blank=True)
+    legalname_en = models.CharField(max_length=500, null=True, blank=True)
+    legalname_ru = models.CharField(max_length=500, null=True, blank=True)
+    address_uz = models.TextField(max_length=5000, null=True, blank=True)
+    address_en = models.TextField(max_length=5000, null=True, blank=True)
+    address_ru = models.TextField(max_length=5000, null=True, blank=True)
+    contacts = models.TextField(max_length=5000, null=True, blank=True)
 
     def __str__(self):
         return self.name_uz
