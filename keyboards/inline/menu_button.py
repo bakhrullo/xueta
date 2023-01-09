@@ -86,10 +86,30 @@ async def back_keyboard(lang):
 
     keyboard = ReplyKeyboardMarkup()
     key1 = KeyboardButton(text=f"🏠 {texts[1]}")
-    # key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
+    key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
+    keyboard.add(key1, key2)
+    keyboard.resize_keyboard = True
+    return keyboard
+
+
+async def asd_back_keyboard(lang):
+    texts = []
+    if lang == "uz":
+        texts = ["Orqaga", "Asosiy menyu", "Tashlab ketish"]
+    elif lang == "en":
+        texts = ["Back", "Main menu", "Skip"]
+    elif lang == "ru":
+        texts = ["Назад", "Главное меню", "Пропустить"]
+
+    keyboard = ReplyKeyboardMarkup()
+    key1 = KeyboardButton(text=f"🏠 {texts[1]}")
+    key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
+    key3 = KeyboardButton(text=f"{texts[2]} ➡️")
+    keyboard.add(key2, key3)
     keyboard.add(key1)
     keyboard.resize_keyboard = True
     return keyboard
+
 
 async def back_to_keyboard(lang):
     texts = []
@@ -103,6 +123,27 @@ async def back_to_keyboard(lang):
     keyboard = ReplyKeyboardMarkup()
     key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
     keyboard.add(key2)
+    keyboard.resize_keyboard = True
+    return keyboard
+
+
+async def library_keyboard(lang):
+    texts = []
+    if lang == "uz":
+        texts = ["Orqaga", "Qarorlar", "Qonunlar", "Yangiliklar"]
+    elif lang == "en":
+        texts = ["Back", "Decisions", "Laws", "News"]
+    elif lang == "ru":
+        texts = ["Назад", "Указы", "Законы", "Новости"]
+
+    keyboard = ReplyKeyboardMarkup()
+    
+    key1 = KeyboardButton(text=f"{texts[1]}")
+    key2 = KeyboardButton(text=f"{texts[2]}")
+    key3 = KeyboardButton(text=f"{texts[3]}")
+    key_back = KeyboardButton(text=f"⬅️ {texts[0]}")
+    keyboard.add(key1, key2, key3)
+    keyboard.add(key_back)
     keyboard.resize_keyboard = True
     return keyboard
 
@@ -150,11 +191,11 @@ async def get_company_monthly(lang):
 async def kontrakt_keyboard(lang):
     texts = []
     if lang == "uz":
-        texts = ["Orqaga", "Asosiy menyu", "Import/eksport shartnoma tuzish", "EGISOA bo'yicha ro'yxatdan o'tish", "Kontraktdagi muammolarni hal qilish"]
+        texts = ["Orqaga", "Asosiy menyu", "Import/eksport shartnoma tuzish", "YeEISVO bo'yicha ro'yxatdan o'tish", "Kontraktdagi muammolarni hal qilish"]
     elif lang == "en":
-        texts = ["Back", "Main menu", "Conclusion of an import/export contract", "Registration under EGISOA", "Solving contract problems"]
+        texts = ["Back", "Main menu", "Conclusion of an import/export contract", "Registration under YeEISVO", "Solving contract problems"]
     elif lang == "ru":
-        texts = ["Назад", "Главное меню", "Заключение импортно-экспортного контракта", "Регистрация в ЕГИСОА", "Решение проблем с контрактами"]
+        texts = ["Назад", "Главное меню", "Заключение импортно-экспортного контракта", "Регистрация в ЕЭИСВО", "Решение проблем с контрактами"]
 
     keyboard = ReplyKeyboardMarkup()
     key1 = KeyboardButton(text=f"🏠 {texts[1]}")
