@@ -287,7 +287,7 @@ async def get_phone(message: types.Message, state: FSMContext):
         user.save()
         markup = await user_menu(lang)
         if lang == "uz":
-            await message.answer("Botimizga xush kelibsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
+            await message.answer("Botimizga xush kelighjk,bsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
         elif lang == "en":
             await message.answer("Welcome to our bot. Choose the section you want 👇", reply_markup=markup)
         elif lang == "ru":
