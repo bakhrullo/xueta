@@ -314,3 +314,14 @@ def get_tenved(kod):
     except Exception as exx:
         print(exx)
         return None
+    
+
+@sync_to_async
+def get_tenved_id(id):
+    try:
+        tenved = TnVed.objects.get(id=id)
+        return tenved
+    except Exception as exx:
+        print(exx)
+        return None
+    

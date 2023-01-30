@@ -28,6 +28,30 @@ async def customs_keyboard(lang, region):
     return markup
 
 
+async def tnved_keyboard(lang):
+    kods = TnVed.objects.all()
+    markup = InlineKeyboardMarkup(row_width=1)
+    text_back = ''
+    for i in kods:
+        if lang == "uz":
+            text_back = "Ortga"
+            markup.insert(InlineKeyboardButton(text=f"{i.kod}", callback_data=i.id))
+        if lang == "en":
+            text_back = "Back"
+            markup.insert(InlineKeyboardButton(text=f"{i.kod}", callback_data=i.id))
+        if lang == "ru":
+            text_back = "Назад"
+            markup.insert(InlineKeyboardButton(text=f"{i.kod}", callback_data=i.id))
+    if lang == "uz":
+        text_back = "Ortga"
+    if lang == "en":
+        text_back = "Back"
+    if lang == "ru":
+        text_back = "Назад"
+    markup.add(InlineKeyboardButton(text=f"🔙 {text_back}", callback_data=f"back"))
+    return markup
+
+
 async def posts_keyboard(lang, region):
     posts = PostService.objects.filter(region__id=region).all()
     markup = InlineKeyboardMarkup(row_width=2)
