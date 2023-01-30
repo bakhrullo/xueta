@@ -53,20 +53,20 @@ async def user_menu(lang):
     text = []
     for category in categories:
         if lang == "uz":
-            text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi", "Kutubxona"]
+            text = ["Eng yaqin manzillar", "Sozlamalar ⚙️", "Valyutalar kursi 💳", "Kutubxona 📚"]
             keyboard.insert(KeyboardButton(text=category.name_uz))
         if lang == "en":
-            text = ["Nearest addresses", "Settings", "Exchange rates", "Library"]
+            text = ["Nearest addresses", "Settings ⚙️", "Exchange rates 💳", "Library 📚"]
             keyboard.insert(KeyboardButton(text=category.name_en))
         if lang == "ru":
-            text = ["Самые близкие адреса", "Настройки", "Курсы обмена валюты", "Библиотека"]
+            text = ["Самые близкие адреса", "Настройки ⚙️", "Курсы обмена валюты 💳", "Библиотека 📚"]
             keyboard.insert(KeyboardButton(text=category.name_ru))
     if lang == "uz":
-        text = ["Eng yaqin manzillar", "Sozlamalar", "Valyutalar kursi", "Kutubxona"]
+        text = ["Eng yaqin manzillar", "Sozlamalar ⚙️", "Valyutalar kursi 💳", "Kutubxona 📚"]
     if lang == "en":
-        text = ["Nearest addresses", "Settings", "Exchange rates", "Library"]
+        text = ["Nearest addresses", "Settings ⚙️", "Exchange rates 💳", "Library 📚"]
     if lang == "ru":
-        text = ["Самые близкие адреса", "Настройки", "Курсы обмена валюты", "Библиотека"]
+        text = ["Самые близкие адреса", "Настройки ⚙️", "Курсы обмена валюты 💳", "Библиотека 📚"]
     key1 = KeyboardButton(text=f"{text[0]}")
     key2 = KeyboardButton(text=f"{text[2]}")
     key4 = KeyboardButton(text=f"{text[3]}")
