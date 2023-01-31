@@ -493,7 +493,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup)
         await state.set_state("sertification")
-    if message.text in ["TN VED Kodi", "HS CODE", "Код ТНВЭД"]:
+    if message.text in ["TN VED Kodi 🆔", "HS CODE 🆔", "Код ТНВЭД 🆔"]:
         back_key = await back_to_keyboard(lang)
         markup = await tnved_keyboard(lang)
         if lang == "uz":
