@@ -316,7 +316,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
     if category is not None and category != []:
         user.interests.add(category)
         user.save()
-    if message.text in ["Sozlamalar", "Настройки", "Settings"]:
+    if message.text in ["Sozlamalar ⚙️", "Настройки ⚙️", "Settings ⚙️"]:
         markup = await settings_keyboard(lang)
         if lang == "uz":
             await message.answer(text="Kerakli buyruqni tanlang 👇", reply_markup=markup)
@@ -325,7 +325,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         elif lang == "ru":
             await message.answer(text="Выберите нужную команду 👇", reply_markup=markup)
         await state.set_state("settings")
-    elif message.text in ["Библиотека", "Kutubxona", "Library"]:
+    elif message.text in ["Библиотека 📚", "Kutubxona 📚", "Library 📚"]:
         markup = await library_keyboard(lang)
         if lang == "uz":
             await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup)
@@ -337,7 +337,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         # doc = open("./qaror.pdf", 'rb')
         # markup = await user_menu(lang)
         # await message.answer_document(document=doc, reply_markup=markup)
-    elif message.text in ["Valyutalar kursi", "Exchange rates", "Курсы обмена валюты"]:
+    elif message.text in ["Valyutalar kursi 💳", "Exchange rates 💳", "Курсы обмена валюты 💳"]:
         markup = await user_menu(lang)
         kurslar = valyuta_kurslari()
         if lang == "uz":
@@ -350,7 +350,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await message.answer(text=kurslar)
             await message.answer(text="Выберите нужную команду 👇", reply_markup=markup)
         await state.set_state("get_category")
-    elif message.text in ["Import", "Импорт"]:
+    elif message.text in ["Import  🚚", "Импорт  🚚"]:
         if user.full:
             if lang == "uz":
                 await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
@@ -367,7 +367,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["Export", "Экспорт"]:
+    if message.text in ["Export 🚛", "Экспорт 🚛"]:
         if user.full:
             if lang == "uz":
                 await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
@@ -384,7 +384,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["Contract", "Kontrakt", "Контракт"]:
+    if message.text in ["Contract 🗂", "Kontrakt 🗂", "Контракт 🗂"]:
         if user.full:
             markup = await kontrakt_keyboard(lang)
             if lang == "uz":
@@ -402,7 +402,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["TIF bojxona ro'yxati", "TIF customs list", "Тифозный таможенный список"]:
+    if message.text in ["TIF bojxona ro'yxati ⛪️", "TIF customs list ⛪️", "Тифозный таможенный список ⛪️"]:
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
         if lang == "uz":
@@ -418,7 +418,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_customs_region")
-    if message.text in ["Yuk xizmatlari", "Freight services", "Грузовые услуги"]:
+    if message.text in ["Yuk xizmatlari 📦", "Freight services 📦", "Грузовые услуги 📦"]:
         markup = await freight_keyboard(lang)
         back_key = await back_to_keyboard(lang)
         if lang == "uz":
@@ -434,7 +434,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup)
         await state.set_state("get_freight_service")
-    if message.text in ["Omborlar ro'yxati", "Warehouse list", "Список складов"]:
+    if message.text in ["Omborlar ro'yxati 🏢", "Warehouse list 🏢", "Список складов 🏢"]:
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
         if lang == "uz":
@@ -459,7 +459,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         if lang == "ru":
             await message.answer("Отправьте свое местоположение 👇", reply_markup=markup)
         await state.set_state("get_location")
-    if message.text in ["Pochta xizmati", "Postal service", "Почтовая служба"]:
+    if message.text in ["Pochta xizmati 📨", "Postal service 📨", "Почтовая служба 📨"]:
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
         if lang == "uz":
@@ -475,7 +475,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_post_region")                                      
-    if message.text in ["Sertifikatlash", "Certification", "Сертификация"]:
+    if message.text in ["Sertifikatlash 📑", "Certification 📑", "Сертификация 📑"]:
         back_key = await back_to_keyboard(lang)
         await state.update_data(page=1)
         max_data = await get_sertification_count()
