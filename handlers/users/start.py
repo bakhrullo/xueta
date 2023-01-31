@@ -350,7 +350,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await message.answer(text=kurslar)
             await message.answer(text="Выберите нужную команду 👇", reply_markup=markup)
         await state.set_state("get_category")
-    elif message.text in ["Import  🚚", "Импорт  🚚"]:
+    elif message.text in ["Import 🚚", "Импорт 🚚"]:
         if user.full:
             if lang == "uz":
                 await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
