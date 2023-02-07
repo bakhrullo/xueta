@@ -529,11 +529,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         tenved = await get_tenved_id(call.data)
         markup = await back(lang)
         if lang == "uz":
-            await call.message.edit_text(f"{tenved.kod} - {tenved.description_uz}", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(f"{tenved.kod} - {tenved.description_uz}", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(f"{tenved.kod} - {tenved.description_en}", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(f"{tenved.kod} - {tenved.description_en}", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(f"{tenved.kod} - {tenved.description_uz}", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(f"{tenved.kod} - {tenved.description_uz}", reply_markup=markup)
         await state.set_state("tenved")
 
 
@@ -544,11 +544,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await tnved_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli kodni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("kodni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Select the desired code 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Select the desired code 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный код 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный код 👇", reply_markup=markup)
         await state.set_state("get_tnved")
 
 
@@ -609,11 +609,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         sert = await get_sertification(command)
         markup = await back(lang)
         if lang == "uz":
-            await call.message.edit_text(text=f"{sert.legalname_uz}\n\n{sert.address_uz}\n\n{sert.contacts}\n\n", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text=f"{sert.legalname_uz}\n\n{sert.address_uz}\n\n{sert.contacts}\n\n", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(text=f"{sert.legalname_en}\n\n{sert.address_en}\n\n{sert.contacts}\n\n", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text=f"{sert.legalname_en}\n\n{sert.address_en}\n\n{sert.contacts}\n\n", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(text=f"{sert.legalname_ru}\n\n{sert.address_ru}\n\n{sert.contacts}\n\n", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text=f"{sert.legalname_ru}\n\n{sert.address_ru}\n\n{sert.contacts}\n\n", reply_markup=markup)
         await state.set_state("get_sertificate")
 
 
@@ -628,11 +628,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await sertification_keyboard(lang=lang, page=int(this_page))
         if lang == "uz":
-            await call.message.edit_text(text=f"Jami ma'lumotlar {max_data} ta. Kerakli Sertifikatlash idorasini tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text=f"Jami ma'lumotlar {max_data} ta. Kerakli Sertifikatlash idorasini tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(text="Total data in {max_data}. Select the desired Certificate Authority 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Total data in {max_data}. Select the desired Certificate Authority 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(text=f"Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup, protect_content=True)        
+            await call.message.edit_text(text=f"Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup)
         await state.set_state('sertification')
 
 
@@ -655,11 +655,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         await state.update_data(region=call.data)
         markup = await customs_keyboard(lang=lang, region=call.data)
         if lang == "uz":
-            await call.message.edit_text(text=f"{region.name_uz}dagi TIF bojxonalari 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text=f"{region.name_uz}dagi TIF bojxonalari 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(text="TIF customs offices in {region.name_en} 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="TIF customs offices in {region.name_en} 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(text=f"Таможенные посты TIF в {region.name_ru} 👇", reply_markup=markup, protect_content=True)        
+            await call.message.edit_text(text=f"Таможенные посты TIF в {region.name_ru} 👇", reply_markup=markup)
         await state.set_state("get_tif")
 
 
@@ -670,11 +670,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await region_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_customs_region") 
     else:
         await call.message.delete()
@@ -700,11 +700,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         region = await get_region(region_id)
         markup = await customs_keyboard(lang=lang, region=region_id)
         if lang == "uz":
-            await call.message.edit_text(text=f"{region.name_uz}dagi TIF bojxonalari 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text=f"{region.name_uz}dagi TIF bojxonalari 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(text="TIF customs offices in {region.name_en} 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="TIF customs offices in {region.name_en} 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(text=f"Таможенные посты TIF в {region.name_ru} 👇", reply_markup=markup, protect_content=True)        
+            await call.message.edit_text(text=f"Таможенные посты TIF в {region.name_ru} 👇", reply_markup=markup)
         await state.set_state("get_tif")
         
         
@@ -734,7 +734,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             text += f"There are {counts} warehouses in {region.name_en}. They are:"
         if lang == "ru":
             text += f"В регионе {region.name_ru} есть {counts} складов. Они есть:"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
+        await call.message.edit_text(text=text, reply_markup=markup)
         await state.set_state("get_post_service")
 
 
@@ -745,11 +745,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await region_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_post_region") 
     else:
         await call.message.delete()
@@ -814,7 +814,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             text += f"There are {counts} warehouses in {region.name_en}. They are:"
         if lang == "ru":
             text += f"В регионе {region.name_ru} есть {counts} складов. Они есть:"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
+        await call.message.edit_text(text=text, reply_markup=markup)
         await state.set_state("get_wearhouse")
 
 
@@ -825,11 +825,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await region_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_region") 
     else:
         await call.message.delete()
@@ -958,20 +958,20 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "loader_equipment":
         markup = await loader_equipment_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text(text="Iltimos xizmat turini tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Iltimos xizmat turini tanlang 👇", reply_markup=markup)
         elif lang == "en":
-            await call.message.edit_text(text="Please select the type of service 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Please select the type of service 👇", reply_markup=markup)
         elif lang == "ru":
-            await call.message.edit_text(text="Пожалуйста, выберите тип услуги 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Пожалуйста, выберите тип услуги 👇", reply_markup=markup)
         await state.set_state('get_equipment_type')
     if command == "loader_service":
         markup = await region_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Select the desired region 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_loader_region")
     if command == "shipping":
         text = ""
@@ -982,8 +982,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             text += f"Choose the type of service you need 👇"
         if lang == 'ru':
             text += f"Выберите тип услуги, который вам нужен 👇"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
-        await state.set_state("get_logistics_service")
+        await call.message.edit_text(text=text, reply_markup=markup.set_state("get_logistics_service")
 
 
 @dp.callback_query_handler(state="get_logistics_service")
@@ -993,20 +992,20 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await freight_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup)
         await state.set_state("get_freight_service")
     elif command == "internal":
         markup = await region_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Select the desired region 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_logistics_region")
 
 
@@ -1023,7 +1022,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             text += f"Choose the type of service you need 👇"
         if lang == 'ru':
             text += f"Выберите тип услуги, который вам нужен 👇"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
+        await call.message.edit_text(text=text, reply_markup=markup)
         await state.set_state("get_logistics_service")
     else:
         await state.update_data(region=call.data)
@@ -1035,7 +1034,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             text += f"Select the desired weight (in tons) 👇"
         if lang == 'ru':
             text += f"Выберите нужный вес (в тоннах) 👇"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
+        await call.message.edit_text(text=text, reply_markup=markup)
         await state.set_state("get_logistics_tonna")                       
 
 
@@ -1046,11 +1045,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await region_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Select the desired region 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_logistics_region")
     else:
         state_data = await state.get_data()
@@ -1067,8 +1066,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
                 text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
             if lang == "ru":
                 text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
-        await state.set_state("logistic_service")
+        await call.message.edit_text(text=text, reply_markup=markup.set_state("logistic_service")
 
 
 @dp.callback_query_handler(state="logistic_service")
@@ -1089,7 +1087,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             text += f"Select the desired weight (in tons) 👇"
         if lang == 'ru':
             text += f"Выберите нужный вес (в тоннах) 👇"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
+        await call.message.edit_text(text=text, reply_markup=markup)
         await state.set_state("get_logistics_tonna")                       
     elif command == "next_page":
         objects = await get_by_tonna(tonna=tonna, region=region)
@@ -1108,7 +1106,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
                 text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
             if lang == "ru":
                 text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
+        await call.message.edit_text(text=text, reply_markup=markup)
         await state.update_data(page=page)
     elif command == "last_page":
         objects = await get_by_tonna(tonna=tonna, region=region)
@@ -1127,7 +1125,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
                 text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
             if lang == "ru":
                 text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
-        await call.message.edit_text(text=text, reply_markup=markup, protect_content=True)
+        await call.message.edit_text(text=text, reply_markup=markup)
         await state.update_data(page=page)
 
         
@@ -1160,21 +1158,21 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await freight_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup)
         await state.set_state("get_freight_service")
     else:
         await state.update_data(equipment_type=command)
         markup = await region_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Kerakli viloyatni tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Select the desired region 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Select the desired region 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный регион 👇", reply_markup=markup)
         await state.set_state("get_equipment_region")
         
         
@@ -1185,11 +1183,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await freight_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Kerakli xizmat turini tanlang 👇", reply_markup=markup)
         if lang == "en":
-            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Choose the type of service you need 👇", reply_markup=markup)
         if lang == "ru":
-            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text("Выберите нужный вам вид услуги 👇", reply_markup=markup)
         await state.set_state("get_freight_service")
     else:
         await call.message.delete()
@@ -1247,11 +1245,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     if command == "back":
         markup = await loader_equipment_keyboard(lang)
         if lang == "uz":
-            await call.message.edit_text(text="Iltimos xizmat turini tanlang 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Iltimos xizmat turini tanlang 👇", reply_markup=markup)
         elif lang == "en":
-            await call.message.edit_text(text="Please select the type of service 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Please select the type of service 👇", reply_markup=markup)
         elif lang == "ru":
-            await call.message.edit_text(text="Пожалуйста, выберите тип услуги 👇", reply_markup=markup, protect_content=True)
+            await call.message.edit_text(text="Пожалуйста, выберите тип услуги 👇", reply_markup=markup)
         await state.set_state('get_equipment_type')
     else:
         data = await state.get_data()
@@ -1278,11 +1276,11 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         else:
             markup = await loader_equipment_keyboard(lang)
             if lang == "uz":
-                await call.message.edit_text(text="🚫 Ma'lumotlar topilmadi. \n\nIltimos xizmat turini tanlang 👇", reply_markup=markup, protect_content=True)
+                await call.message.edit_text(text="🚫 Ma'lumotlar topilmadi. \n\nIltimos xizmat turini tanlang 👇", reply_markup=markup)
             elif lang == "en":
-                await call.message.edit_text(text="🚫 No data found. \n\nPlease select the type of service 👇", reply_markup=markup, protect_content=True)
+                await call.message.edit_text(text="🚫 No data found. \n\nPlease select the type of service 👇", reply_markup=markup)
             elif lang == "ru":
-                await call.message.edit_text(text="🚫 Данные не найдены. \n\nПожалуйста, выберите тип услуги 👇", reply_markup=markup, protect_content=True)
+                await call.message.edit_text(text="🚫 Данные не найдены. \n\nПожалуйста, выберите тип услуги 👇", reply_markup=markup)
             await state.set_state('get_equipment_type')
 
         
