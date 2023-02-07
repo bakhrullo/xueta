@@ -53,18 +53,18 @@ async def user_menu(lang):
     text = []
     for category in categories:
         if lang == "uz":
-            if category.name_uz == "Kontrakt 🗂":
-                keyboard.row_width(1, KeyboardButton(text=category.name_uz))
+            if category.name_uz == "TIF bojxona ro'yxati ⛪️":
+                keyboard.row(KeyboardButton(text=category.name_uz))
             else:
                 keyboard.insert(KeyboardButton(text=category.name_uz))
         if lang == "en":
-            if category.name_uz == "Kontrakt 🗂":
-                keyboard.row_width(1, KeyboardButton(text=category.name_en))
+            if category.name_uz == "TIF bojxona ro'yxati ⛪️":
+                keyboard.row(KeyboardButton(text=category.name_en))
             else:
                 keyboard.insert(KeyboardButton(text=category.name_en))
         if lang == "ru":
-            if category.name_uz == "Kontrakt 🗂":
-                keyboard.row_width(1, KeyboardButton(text=category.name_ru))
+            if category.name_uz == "TIF bojxona ro'yxati ⛪️":
+                keyboard.row(KeyboardButton(text=category.name_ru))
             else:
                 keyboard.insert(KeyboardButton(text=category.name_ru))
     if lang == "uz":
