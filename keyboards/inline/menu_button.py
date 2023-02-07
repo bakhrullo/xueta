@@ -53,14 +53,20 @@ async def user_menu(lang):
     text = []
     for category in categories:
         if lang == "uz":
-            text = ["Eng yaqin manzillar", "Sozlamalar ⚙️", "Valyutalar kursi 💳", "Kutubxona 📚"]
-            keyboard.insert(KeyboardButton(text=category.name_uz))
+            if category.name_uz == "Kontrakt 🗂":
+                keyboard.row(KeyboardButton(text=category.name_uz))
+            else:
+                keyboard.insert(KeyboardButton(text=category.name_uz))
         if lang == "en":
-            text = ["Nearest addresses", "Settings ⚙️", "Exchange rates 💳", "Library 📚"]
-            keyboard.insert(KeyboardButton(text=category.name_en))
+            if category.name_uz == "Kontrakt 🗂":
+                keyboard.row(KeyboardButton(text=category.name_en))
+            else:
+                keyboard.insert(KeyboardButton(text=category.name_en))
         if lang == "ru":
-            text = ["Самые близкие адреса", "Настройки ⚙️", "Курсы обмена валюты 💳 ", "Библиотека 📚"]
-            keyboard.insert(KeyboardButton(text=category.name_ru))
+            if category.name_uz == "Kontrakt 🗂":
+                keyboard.row(KeyboardButton(text=category.name_ru))
+            else:
+                keyboard.insert(KeyboardButton(text=category.name_ru))
     if lang == "uz":
         text = ["Eng yaqin manzillar", "Sozlamalar ⚙️", "Valyutalar kursi 💳", "Kutubxona 📚"]
     if lang == "en":
@@ -120,7 +126,7 @@ async def back_to_keyboard(lang):
     elif lang == "ru":
         texts = ["Назад", "Главное меню"]
 
-    keyboard = ReplyKeyboardMarkup()
+    keyboard = ReplyKeyboardMarkup(one_time_keyboard=True)
     key2 = KeyboardButton(text=f"⬅️ {texts[0]}")
     keyboard.add(key2)
     keyboard.resize_keyboard = True
