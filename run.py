@@ -2,6 +2,8 @@ import os
 import django
 from aiogram import Bot, Dispatcher
 import logging
+import sentry_sdk
+from data import config
 # from send_keyboard import customer
 
 
@@ -29,6 +31,14 @@ def setup_django():
 
 
 if __name__ == '__main__':
+    sentry_sdk.init(
+        dsn=config.SENTRY,
+
+        # Set traces_sample_rate to 1.0 to capture 100%
+        # of transactions for performance monitoring.
+        # We recommend adjusting this value in production.
+        traces_sample_rate=1.0
+    )
     setup_django()
 
     from aiogram.utils import executor
