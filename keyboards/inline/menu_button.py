@@ -56,17 +56,17 @@ async def user_menu(lang):
             if category.name_uz == "Kontrakt 🗂":
                 keyboard.add(KeyboardButton(text=category.name_uz))
             else:
-                keyboard.insert(KeyboardButton(text=category.name_uz))
+                keyboard.row(KeyboardButton(text=category.name_uz))
         if lang == "en":
             if category.name_uz == "Kontrakt 🗂":
                 keyboard.add(KeyboardButton(text=category.name_en))
             else:
-                keyboard.insert(KeyboardButton(text=category.name_en))
+                keyboard.row(KeyboardButton(text=category.name_en))
         if lang == "ru":
             if category.name_uz == "Kontrakt 🗂":
                 keyboard.add(KeyboardButton(text=category.name_ru))
             else:
-                keyboard.insert(KeyboardButton(text=category.name_ru))
+                keyboard.row(KeyboardButton(text=category.name_ru))
     if lang == "uz":
         text = ["Eng yaqin manzillar", "Sozlamalar ⚙️", "Valyutalar kursi 💳", "Kutubxona 📚"]
     if lang == "en":
