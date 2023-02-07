@@ -982,7 +982,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             text += f"Choose the type of service you need 👇"
         if lang == 'ru':
             text += f"Выберите тип услуги, который вам нужен 👇"
-        await call.message.edit_text(text=text, reply_markup=markup.set_state("get_logistics_service")
+        await call.message.edit_text(text=text, reply_markup=markup.set_state("get_logistics_service"))
 
 
 @dp.callback_query_handler(state="get_logistics_service")
@@ -1066,7 +1066,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
                 text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
             if lang == "ru":
                 text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
-        await call.message.edit_text(text=text, reply_markup=markup.set_state("logistic_service")
+        await call.message.edit_text(text=text, reply_markup=markup.set_state("logistic_service"))
 
 
 @dp.callback_query_handler(state="logistic_service")
