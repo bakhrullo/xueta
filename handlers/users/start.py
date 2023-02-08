@@ -308,14 +308,13 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
 
 
-@dp.message_handler(state="get_category", commands=["import", "export", "settings"])
+@dp.message_handler(state="get_category", commands=["import", "export", "settings", "contract", "customs", "cargo", "warehouse", "postal", "certification", "code", "contactus", "feedback", "address", "exchange", "library"])
 @dp.message_handler(state="get_category", content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     back_key = await back_keyboard(lang)
     user = await get_user(message.from_user.id)
     cmd = str(message.get_command())
-    await message.answer(text=cmd)
     await state.update_data(state=message.text)
     message_id = int(message.message_id) + 1
     category = await get_category_by_name(message.text)
@@ -331,7 +330,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         elif lang == "ru":
             await message.answer(text="Выберите нужную команду 👇", reply_markup=markup, protect_content=True)
         await state.set_state("settings")
-    elif message.text in ["Библиотека 📚", "Kutubxona 📚", "Library 📚"]:
+    elif message.text in ["Библиотека 📚", "Kutubxona 📚", "Library 📚"] or cmd == "/library":
         markup = await library_keyboard(lang)
         if lang == "uz":
             await message.answer("Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup, protect_content=True)
@@ -343,7 +342,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         # doc = open("./qaror.pdf", 'rb')
         # markup = await user_menu(lang)
         # await message.answer_document(document=doc, reply_markup=markup, protect_content=True)
-    elif message.text in ["Valyutalar kursi 💳", "Exchange rates 💳", "Курсы обмена валюты 💳"]:
+    elif message.text in ["Valyutalar kursi 💳", "Exchange rates 💳", "Курсы обмена валюты 💳"] or cmd == "/exchange":
         markup = await user_menu(lang)
         kurslar = valyuta_kurslari()
         if lang == "uz":
@@ -356,7 +355,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await message.answer(text=kurslar)
             await message.answer(text="Выберите нужную команду 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_category")
-    elif message.text in ["Import 🚚", "Импорт 🚚"]:
+    elif message.text in ["Import 🚚", "Импорт 🚚"]  or cmd == "/import":
         if user.full:
             if lang == "uz":
                 await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
@@ -373,7 +372,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["Export 🚛", "Экспорт 🚛"]:
+    if message.text in ["Export 🚛", "Экспорт 🚛"] or cmd == "/export":
         if user.full:
             if lang == "uz":
                 await message.answer("Maxsulot nomini kiriting 👇", reply_markup=back_key)
@@ -390,7 +389,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["Contract 🗂", "Kontrakt 🗂", "Контракт 🗂"]:
+    if message.text in ["Contract 🗂", "Kontrakt 🗂", "Контракт 🗂"]  or cmd == "/contact":
         if user.full:
             markup = await kontrakt_keyboard(lang)
             if lang == "uz":
@@ -408,7 +407,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["TIF bojxona ro'yxati ⛪️", "TIF customs list ⛪️", "Тифозный таможенный список ⛪️"]:
+    if message.text in ["TIF bojxona ro'yxati ⛪️", "TIF customs list ⛪️", "Тифозный таможенный список ⛪️"] or cmd == "/customs":
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
         if lang == "uz":
@@ -424,7 +423,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_customs_region")
-    if message.text in ["Yuk xizmatlari 📦", "Freight services 📦", "Грузовые услуги 📦"]:
+    if message.text in ["Yuk xizmatlari 📦", "Freight services 📦", "Грузовые услуги 📦"] or cmd == "/cargo":
         markup = await freight_keyboard(lang)
         back_key = await back_to_keyboard(lang)
         if lang == "uz":
@@ -440,7 +439,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный вам вид услуги 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_freight_service")
-    if message.text in ["Omborlar ro'yxati 🏢", "Warehouse list 🏢", "Список складов 🏢"]:
+    if message.text in ["Omborlar ro'yxati 🏢", "Warehouse list 🏢", "Список складов 🏢"] or cmd == "/warehouse":
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
         if lang == "uz":
@@ -456,7 +455,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_region")                                      
-    if message.text in ["Eng yaqin manzillar", "Nearest addresses", "Самые близкие адреса"]:
+    if message.text in ["Eng yaqin manzillar", "Nearest addresses", "Самые близкие адреса"] or cmd == "/address":
         markup = await location_send(lang)
         if lang == "uz":
             await message.answer("Joylashuv manzilingizni jo'nating 👇", reply_markup=markup, protect_content=True)
@@ -465,7 +464,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         if lang == "ru":
             await message.answer("Отправьте свое местоположение 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_location")
-    if message.text in ["Pochta xizmati 📨", "Postal service 📨", "Почтовая служба 📨"]:
+    if message.text in ["Pochta xizmati 📨", "Postal service 📨", "Почтовая служба 📨"] or cmd == "/postal":
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
         if lang == "uz":
@@ -481,7 +480,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_post_region")                                      
-    if message.text in ["Sertifikatlash 📑", "Certification 📑", "Сертификация 📑"]:
+    if message.text in ["Sertifikatlash 📑", "Certification 📑", "Сертификация 📑"] or cmd == "/certification":
         back_key = await back_to_keyboard(lang)
         await state.update_data(page=1)
         max_data = await get_sertification_count()
@@ -499,7 +498,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup, protect_content=True)
         await state.set_state("sertification")
-    if message.text in ["TN VED Kodi 🆔", "HS CODE 🆔", "Код ТНВЭД 🆔"]:
+    if message.text in ["TN VED Kodi 🆔", "HS CODE 🆔", "Код ТНВЭД 🆔"] or cmd == "/code":
         back_key = await back_to_keyboard(lang)
         markup = await tnved_keyboard(lang)
         if lang == "uz":
