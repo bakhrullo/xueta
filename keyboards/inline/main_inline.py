@@ -134,7 +134,7 @@ async def freight_keyboard(lang):
     markup = InlineKeyboardMarkup(row_width=2)
     texts = ['']
     if lang == "uz":
-        texts = ["Ortga", "Yuklovchi xizmati", "Yuklovchi texnika", "Yuk tashish"]
+        texts = ["Ortga", "Yuklovchi xizmati (Грузчик)", "Yuklovchi texnika", "Yuk tashish"]
     if lang == "en":
         texts = ["Back", "Loader service", "Loader equipment", "Shipping"]
     if lang == "ru":
