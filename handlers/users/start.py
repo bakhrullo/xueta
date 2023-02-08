@@ -311,8 +311,8 @@ async def get_phone(message: types.Message, state: FSMContext):
 @dp.message_handler(state="get_category", commands=["import", "export"], content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
-    logging.warning(message.get_command())
-    logging.warning(message.get_full_command())
+    await message.answer(text=f"{message.get_command()}")
+    await message.answer(text=f"{message.get_full_command()}")
     back_key = await back_keyboard(lang)
     user = await get_user(message.from_user.id)
     await state.update_data(state=message.text)
