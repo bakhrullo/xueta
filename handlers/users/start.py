@@ -313,7 +313,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     back_key = await back_keyboard(lang)
     user = await get_user(message.from_user.id)
-    cmd = str(message.get_full_command())
+    cmd = str(message.get_command())
     await state.update_data(state=message.text)
     message_id = int(message.message_id) + 1
     category = await get_category_by_name(message.text)
