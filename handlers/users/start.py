@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.dispatcher import FSMContext
@@ -70,10 +72,10 @@ async def add_datas(message: types.Message, state: FSMContext):
             await state.set_state("get_lang")
 
 
-
 @dp.message_handler(commands=["add"], state="*")
 async def add_datas(message: types.Message, state: FSMContext):
     add_data()
+
 
 @dp.message_handler(lambda message: message.text in ["🏠 Asosiy menyu", "🏠 Main menu", "🏠 Главное меню"], state='*')
 async def go_home(message: types.Message, state: FSMContext):
@@ -135,6 +137,7 @@ async def bot_start(message: types.Message, state: FSMContext):
 @dp.message_handler(state="get_lang")
 async def get_language(message: types.Message, state: FSMContext):
     if message.text in ["🇺🇿 O'zbek tili", "🇺🇸 English", "🇷🇺 Русский язык"]:
+        data = []
         if message.text == "🇺🇿 O'zbek tili":
             data = "uz"
         elif message.text == "🇺🇸 English":
@@ -305,9 +308,11 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
 
 
-@dp.message_handler(state="get_category", content_types=types.ContentTypes.TEXT)
+@dp.message_handler(state="get_category", commands=["import", "export"], content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
+    logging.warning(message.get_command())
+    logging.warning(message.get_full_command())
     back_key = await back_keyboard(lang)
     user = await get_user(message.from_user.id)
     await state.update_data(state=message.text)
