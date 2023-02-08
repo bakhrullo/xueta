@@ -311,17 +311,16 @@ async def get_phone(message: types.Message, state: FSMContext):
 @dp.message_handler(state="get_category", commands=["import", "export"], content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
-    await message.answer(text=f"{message.get_command()}")
-    await message.answer(text=f"{message.get_full_command()}")
     back_key = await back_keyboard(lang)
     user = await get_user(message.from_user.id)
+    cmd = str(message.get_full_command())
     await state.update_data(state=message.text)
     message_id = int(message.message_id) + 1
     category = await get_category_by_name(message.text)
     if category is not None and category != []:
         user.interests.add(category)
         user.save()
-    if message.text in ["Sozlamalar ⚙️", "Настройки ⚙️", "Settings ⚙️"]:
+    if message.text in ["Sozlamalar ⚙️", "Настройки ⚙️", "Settings ⚙️"] or cmd == "/settings":
         markup = await settings_keyboard(lang)
         if lang == "uz":
             await message.answer(text="Kerakli buyruqni tanlang 👇", reply_markup=markup, protect_content=True)
