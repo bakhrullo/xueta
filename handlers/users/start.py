@@ -389,7 +389,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["Contract 🗂", "Kontrakt 🗂", "Контракт 🗂"]  or cmd == "/contact":
+    if message.text in ["Contract 🗂", "Kontrakt 🗂", "Контракт 🗂"]  or cmd == "/contract":
         if user.full:
             markup = await kontrakt_keyboard(lang)
             if lang == "uz":
