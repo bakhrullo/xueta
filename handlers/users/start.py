@@ -308,7 +308,8 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
 
 
-@dp.message_handler(state="get_category", commands=["import", "export", "settings"], content_types=types.ContentTypes.TEXT)
+@dp.message_handler(state="get_category", commands=["import", "export", "settings"])
+@dp.message_handler(state="get_category", content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
     lang = await get_lang(message.from_user.id)
     back_key = await back_keyboard(lang)
