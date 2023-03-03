@@ -407,7 +407,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             if lang == "ru":
                 await message.answer("Введите название вашей компании 👇", reply_markup=back_key)
             await state.set_state("get_company_name")
-    if message.text in ["TIF bojxona ro'yxati ⛪️", "TIF customs list ⛪️", "Тифозный таможенный список ⛪️"] or cmd == "/customs":
+    if message.text in ["TIF bojxona ro'yxati 🏫", "TIF customs list 🏫", "Тифозный таможенный список 🏫"] or cmd == "/customs":
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
         if lang == "uz":
@@ -455,15 +455,8 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_region")                                      
-    if message.text in ["Eng yaqin manzillar", "Nearest addresses", "Самые близкие адреса"] or cmd == "/address":
-        markup = await location_send(lang)
-        if lang == "uz":
-            await message.answer("Joylashuv manzilingizni jo'nating 👇", reply_markup=markup, protect_content=True)
-        if lang == "en":
-            await message.answer("Please send your location address 👇", reply_markup=markup, protect_content=True)
-        if lang == "ru":
-            await message.answer("Отправьте свое местоположение 👇", reply_markup=markup, protect_content=True)
-        await state.set_state("get_location")
+    if message.text in ["Vagon kuzatish 🚃", "Track carriage 🚃", "Отслеживать вагон 🚃"] or cmd == "/track":
+        pass
     if message.text in ["Pochta xizmati 📨", "Postal service 📨", "Почтовая служба 📨"] or cmd == "/postal":
         back_key = await back_to_keyboard(lang)
         markup = await region_keyboard(lang)
@@ -484,20 +477,22 @@ async def get_service_category(message: types.Message, state: FSMContext):
         back_key = await back_to_keyboard(lang)
         await state.update_data(page=1)
         max_data = await get_sertification_count()
-        markup = await sertification_keyboard(lang=lang, page=1)
+        # markup = await sertification_keyboard(lang=lang, page=1)
+        markup = InlineKeyboardMarkup().add(InlineKeyboardButton(text='Sertifikatlash 📑', callback_data='sert'),
+                                            InlineKeyboardButton(text='Sug\'urtalash 📃', callback_data='sug'))
         if lang == "uz":
             await message.answer(".", reply_markup=back_key)
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-            await message.answer(f"Jami ma'lumotlar {max_data} ta. Kerakli Sertifikatlar idorasini tanlang 👇", reply_markup=markup, protect_content=True)
+            await message.answer(f"Kerakli bo'limni tanlang 👇", reply_markup=markup, protect_content=True)
         if lang == "en":
             await message.answer(".", reply_markup=back_key)
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-            await message.answer("Total data in {max_data}. Select the desired Certificate Authority 👇", reply_markup=markup, protect_content=True)
+            await message.answer("Select the desired Certificate Authority 👇", reply_markup=markup, protect_content=True)
         if lang == "ru":
             await message.answer(".", reply_markup=back_key)
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
-            await message.answer("Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup, protect_content=True)
-        await state.set_state("sertification")
+            await message.answer("Выберите нужный 👇", reply_markup=markup, protect_content=True)
+        await state.set_state("get_sertification")
     if message.text in ["TN VED Kodi 🆔", "HS CODE 🆔", "Код ТНВЭД 🆔"] or cmd == "/code":
         back_key = await back_to_keyboard(lang)
         markup = await tnved_keyboard(lang)
@@ -514,7 +509,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный код 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_tnved")
-     
+
 
 @dp.callback_query_handler(state="get_tnved")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):
@@ -541,6 +536,21 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             await call.message.edit_text(f"{tenved.kod} - {tenved.description_uz}", reply_markup=markup)
         await state.set_state("tenved")
 
+
+@dp.callback_query_handler(state="get_sertification")
+async def get_pod(c: types.CallbackQuery, state: FSMContext):
+    lang = await get_lang(c.from_user.id)
+    if c.data == "sert":
+        await state.update_data(page=1)
+        max_data = await get_sertification_count()
+        markup = await sertification_keyboard(lang=lang, page=1)
+        if lang == "uz":
+            await c.message.edit_text(f"Jami ma'lumotlar {max_data} ta. Kerakli Sertifikatlar idorasini tanlang 👇", reply_markup=markup)
+        if lang == "en":
+            await c.message.answer(f"Total data in {max_data}. Select the desired Certificate Authority 👇", reply_markup=markup)
+        if lang == "ru":
+            await c.message.answer(f"Всего данных на {max_data}. Выберите нужный центр сертификации 👇", reply_markup=markup)
+        await state.set_state("sertification")
 
 @dp.callback_query_handler(state="tenved")
 async def get_tif(call: types.CallbackQuery, state: FSMContext):

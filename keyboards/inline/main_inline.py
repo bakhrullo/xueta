@@ -134,11 +134,11 @@ async def freight_keyboard(lang):
     markup = InlineKeyboardMarkup(row_width=2)
     texts = ['']
     if lang == "uz":
-        texts = ["Ortga", "Yuklovchi xizmati (Грузчик)", "Yuklovchi texnika", "Yuk tashish"]
+        texts = ["Ortga", "Yuklovchi xizmati (Грузчик) 🧍‍♂️", "Yuklovchi texnika 🚙", "Yuk tashish 🔃"]
     if lang == "en":
-        texts = ["Back", "Loader service", "Loader equipment", "Shipping"]
+        texts = ["Back", "Loader service 🧍‍♂️", "Loader equipment 🚙", "Shipping 🔃"]
     if lang == "ru":
-        texts = ["Назад", "Услуги грузчика", "Погрузочная техника", "Перевозки"]
+        texts = ["Назад", "Услуги грузчика 🧍‍♂️", "Погрузочная техника 🚙", "Перевозки 🔃"]
     markup.row(InlineKeyboardButton(text=f"{texts[1]}", callback_data=f"loader_service"))
     markup.row(InlineKeyboardButton(text=f"{texts[2]}", callback_data=f"loader_equipment"))
     markup.row(InlineKeyboardButton(text=f"{texts[3]}", callback_data=f"shipping"))
@@ -193,6 +193,8 @@ async def tonna_keyboard(lang):
     markup.insert(InlineKeyboardButton(text=f"30+", callback_data=f"31-10000"))
     markup.row(InlineKeyboardButton(text=f"🔙 {texts[0]}", callback_data=f"back"))
     return markup
+
+
 
 
 async def sertification_keyboard(lang, page):

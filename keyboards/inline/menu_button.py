@@ -68,11 +68,11 @@ async def user_menu(lang):
             else:
                 keyboard.insert(KeyboardButton(text=category.name_ru))
     if lang == "uz":
-        text = ["Eng yaqin manzillar", "Sozlamalar ⚙️", "Valyutalar kursi 💳", "Kutubxona 📚"]
+        text = ["Vagon kuzatish 🚃", "Sozlamalar ⚙️", "Valyutalar kursi 💳", "Kutubxona 📚"]
     if lang == "en":
-        text = ["Nearest addresses", "Settings ⚙️", "Exchange rates 💳", "Library 📚"]
+        text = ["Track carriage 🚃", "Settings ⚙️", "Exchange rates 💳", "Library 📚"]
     if lang == "ru":
-        text = ["Самые близкие адреса", "Настройки ⚙️", "Курсы обмена валюты 💳", "Библиотека 📚"]
+        text = ["Отслеживать вагон 🚃", "Настройки ⚙️", "Курсы обмена валюты 💳", "Библиотека 📚"]
     key1 = KeyboardButton(text=f"{text[0]}")
     key2 = KeyboardButton(text=f"{text[2]}")
     key4 = KeyboardButton(text=f"{text[3]}")

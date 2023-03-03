@@ -16,7 +16,7 @@ async def set_default_commands(dp):
         types.BotCommand("code", "Код ТНВЭД"),
         types.BotCommand("contactus", "Связатся"),
         types.BotCommand("feedback", "Отзыв"),
-        types.BotCommand("address", "Близкий адрес"),
+        types.BotCommand("track", "Отслеживать"),
         types.BotCommand("exchange", "Обмен валют"),
         types.BotCommand("library", "Библиотека"),
         types.BotCommand("settings", "Настройки"),
