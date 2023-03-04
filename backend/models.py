@@ -125,8 +125,8 @@ class LoaderEquipment(models.Model):
         ("kara", 'Kara'),
         ("manipulyator", 'Manipulyator'),
         ("evacuator", 'Evacuator'),
+        ("kran", 'kran')
     )
-    
 
     name_uz = models.CharField(max_length=500, null=True, blank=True)
     name_en = models.CharField(max_length=500, null=True, blank=True)

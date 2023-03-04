@@ -1270,9 +1270,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         data = await state.get_data()
         region_id = command
         equipment_type = data["equipment_type"]
-        print(equipment_type)
         equipments = await get_loader_equipments(type=equipment_type, region=region_id)
-        print(equipments)
         text = ""
         i = 1
         if equipments and equipments is not None:
