@@ -1,8 +1,12 @@
+from core.wsgi import *
 import os
 import openpyxl
 from backend.models import Region, LoaderEquipment
 
 for filename in os.listdir("fff"):
+    print(filename)
+    if str(filename) in ["Samarqand viloyati", "Buxoro viloyati", "Navoiy viloyati", "Qoraqalpog‘iston R", "Surxondaryo viloyati", "Sirdaryo viloyati"]:
+        continue	
     reg = Region.objects.get(name_uz=filename)
     for file in os.listdir(str("fff/"+filename)):
         book = openpyxl.load_workbook("fff/"+filename+"/"+file, read_only=True)

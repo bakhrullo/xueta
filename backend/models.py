@@ -46,7 +46,7 @@ class User(models.Model):
     name = models.CharField(max_length=500, null=True, blank=True)
     lang = models.CharField(max_length=20, null=True, blank=True)
     order_type = models.CharField(max_length=25, null=True, blank=True)
-    interests = models.ManyToManyField(to=Category, null=True, blank=True)
+    interests = models.ManyToManyField(to=Category)
     phone = models.CharField(max_length=20, null=True, blank=True)
     new_phone = models.CharField(max_length=20, null=True, blank=True)
     otp = models.CharField(max_length=20, null=True, blank=True)
