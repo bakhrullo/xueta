@@ -16,5 +16,7 @@ for i in range(3, row_count + 1):
                              description_uz=str(sheet[f'E{i}'].value),
                              description_ru=str(sheet[f'L{i}'].value),
                              description_en=str(sheet[f'J{i}'].value),
-                             description_kr=str(sheet[f'H{i}'].value)).save()
+                             description_kr=str(sheet[f'H{i}'].value),
+                             address=str(sheet[f'G{i}'].value),
+                             number=str(sheet[f'D{i}'].value)).save()
 
