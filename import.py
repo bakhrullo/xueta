@@ -17,3 +17,4 @@ for filename in os.listdir("fff"):
             LoaderEquipment.objects.create(name_uz=str(sheet[f'C{i}'].value), name_en=str(sheet[f'C{i}'].value),
                                            name_ru=str(sheet[f'C{i}'].value), type='kran',
                                            region=reg).save()
+

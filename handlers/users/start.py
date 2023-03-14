@@ -1,8 +1,11 @@
+import asyncio
 import logging
 
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 from aiogram.dispatcher import FSMContext
+
+from handlers.users.libs import docs
 from keyboards.inline.main_inline import *
 from keyboards.inline.menu_button import *
 from loader import dp, bot
@@ -578,10 +581,39 @@ async def get_service_category(message: types.Message, state: FSMContext):
         elif lang == "en":
             await message.answer("Please select the desired section 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_category")
-    elif message.text == "qa":
-        doc = open("./qaror.pdf", 'rb')
-        markup = await library_keyboard(lang)
-        await message.answer_document(document=doc, reply_markup=markup, protect_content=True)
+    elif message.text in ["Указы", "Законы", "Decisions", "Laws", "Qarorlar", "Qonunlar"]:
+        if lang == "uz":
+            tex = "Yana ➡️"
+        elif lang == "ru":
+            tex = "Ещё ➡️"
+        elif lang == "en":
+            tex = "Continue ➡️"
+
+        for i in range(10):
+            await message.answer_document(document=docs[i])
+            await asyncio.sleep(0.2)
+        await message.answer(tex, reply_markup=InlineKeyboardMarkup()
+                             .insert(InlineKeyboardButton("▶️", callback_data="10")), protect_content=True)
+
+
+@dp.callback_query_handler(state="library")
+async def lib_btns(c: types.CallbackQuery):
+    await c.message.delete()
+    lang = await get_lang(c.from_user.id)
+    if lang == "uz":
+        tex = "Yana ➡️"
+    elif lang == "ru":
+        tex = "Ещё ➡️"
+    elif lang == "en":
+        tex = "Continue ➡️"
+    for i in range(int(c.data), int(c.data) + 10):
+        if i != 60:
+            await c.message.answer_document(document=docs[i])
+            await asyncio.sleep(0.2)
+        else:
+            return await c.message.answer_document(docs[i])
+    await c.message.answer(tex, reply_markup=InlineKeyboardMarkup()
+                           .insert(InlineKeyboardButton("▶️", callback_data=f"{int(c.data) + 10}")), protect_content=True)
 
 
 @dp.callback_query_handler(state="sertification")
@@ -617,7 +649,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         else:
             page = int(this_page) - 1
         markup = await sertification_keyboard(page=page, lang=lang)
-        await call.message.edit_reply_markup(reply_markup=markup, protect_content=True)
+        await call.message.edit_reply_markup(reply_markup=markup)
         await state.update_data(page=page)
     else:
         sert = await get_sertification(command)

@@ -100,7 +100,7 @@ class Wearhouse(models.Model):
     description_ru = models.CharField(max_length=500, null=True, blank=True)
     description_kr = models.CharField(max_length=500, null=True, blank=True)
     region = models.ForeignKey(Region, on_delete=models.SET_NULL, null=True)
-    address = models.TextField(max_length=5000, null=True, blank=True)
+    address_en = models.TextField(max_length=5000, null=True, blank=True)
     owner = models.CharField(max_length=100, null=True)
     number = models.CharField(max_length=100, null=True)
 
