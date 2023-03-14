@@ -113,10 +113,10 @@ async def bot_start(message: types.Message, state: FSMContext):
                 elif lang == "en":
                     await message.answer("Please enter your name 👇", reply_markup=markup, protect_content=True)
                 await state.set_state("get_name")
-                
+
         else:
             markup =await language_keyboard()
-            await message.answer(f"Assalomu alaykum, {message.from_user.first_name}👋. \nKerakli tilni tanlang 👇\n\nHello, {message.from_user.first_name}👋. \nChoose the language you need 👇\n\nЗдравствуйте, {message.from_user.first_name}👋. \nВыберите нужный язык 👇", 
+            await message.answer(f"Assalomu alaykum, {message.from_user.first_name}👋. \nKerakli tilni tanlang 👇\n\nHello, {message.from_user.first_name}👋. \nChoose the language you need 👇\n\nЗдравствуйте, {message.from_user.first_name}👋. \nВыберите нужный язык 👇",
                                 reply_markup=markup, protect_content=True)
             await state.set_state("get_lang")
             
@@ -310,7 +310,6 @@ async def get_phone(message: types.Message, state: FSMContext):
 @dp.message_handler(state="get_category", commands=["import", "export", "settings", "contract", "customs", "cargo", "warehouse", "postal", "certification", "code", "contactus", "feedback", "address", "exchange", "library"])
 @dp.message_handler(state="get_category", content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
-    await message.answer(message.document.file_id)
     lang = await get_lang(message.from_user.id)
     back_key = await back_keyboard(lang)
     user = await get_user(message.from_user.id)
@@ -579,7 +578,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         elif lang == "en":
             await message.answer("Please select the desired section 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_category")
-    elif message.text == "":
+    elif message.text == "qa":
         doc = open("./qaror.pdf", 'rb')
         markup = await library_keyboard(lang)
         await message.answer_document(document=doc, reply_markup=markup, protect_content=True)
