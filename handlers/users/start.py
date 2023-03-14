@@ -307,7 +307,7 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
 
 
-@dp.message_handler(state="get_category", commands=["import", "export", "settings", "contract", "customs", "cargo", "warehouse", "postal", "certification", "code", "contactus", "feedback", "address", "exchange", "library"])
+@dp.message_handler(state="get_category", content_types=[types.ContentTypes.TEXT, types.ContentTypes.DOCUMENT], commands=["import", "export", "settings", "contract", "customs", "cargo", "warehouse", "postal", "certification", "code", "contactus", "feedback", "address", "exchange", "library"])
 @dp.message_handler(state="get_category", content_types=[types.ContentTypes.TEXT, types.ContentTypes.DOCUMENT])
 async def get_service_category(message: types.Message, state: FSMContext):
     await message.answer(message.document.file_id)
