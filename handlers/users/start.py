@@ -24,19 +24,18 @@ def isValid(s):
     return Pattern.match(s)
 
 
-
-def send_sms(otp, phone):
-    username = 'foodline'
-    password = 'JvYkp44)-J&9'
+async def send_sms(otp, phone):
+    username = 'bestbrok'
+    password = 'tM4!-hmV52Z@'
     sms_data = {
-        "messages":[{"recipient":f"{phone}","message-id":"abc000000003","sms":{"originator": "3700","content": {"text": f"Ваш код подтверждения для BEST BROK BOT: {otp}"}}}]}
+        "messages": [{"recipient": f"{phone}", "message-id": "abc000000003", "sms": {"originator": "3700", "content":
+        {"text": f"Ваш код подтверждения для BEST BROK BOT: {otp}"}}}]}
     url = "http://91.204.239.44/broker-api/send"
-    res = requests.post(url=url, headers={}, auth=(username, password), json=sms_data)
+    res = requests.post(url=url, auth=(username, password), json=sms_data)
     print(res)
 
 
-
-def generateOTP():
+async def generateOTP():
     return random.randint(111111, 999999)
 
 
@@ -192,8 +191,8 @@ async def get_phone(message: types.Message, state: FSMContext):
         phone = message.contact.phone_number[0:]
         user = await get_user(message.from_user.id)
         user.new_phone = phone
-        otp = generateOTP()
-        send_sms(otp=otp, phone=phone)
+        otp = await generateOTP()
+        await send_sms(otp=otp, phone=phone)
         user.otp = otp
         user.save()
         print(user.otp)
@@ -243,8 +242,8 @@ async def get_phone(message: types.Message, state: FSMContext):
             phone = message.text
             user = await get_user(message.from_user.id)
             user.new_phone = phone
-            otp = generateOTP()
-            send_sms(otp=otp, phone=phone)
+            otp = await generateOTP()
+            await send_sms(otp=otp, phone=phone)
             user.otp = otp
             user.save()
             print(user.otp)
@@ -998,7 +997,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         if lang == 'ru':
             text += f"Выберите тип услуги, который вам нужен 👇"
         await call.message.edit_text(text=text, reply_markup=markup)
-        await set_state("get_logistics_service")
+        await state.set_state("get_logistics_service")
 
 
 @dp.callback_query_handler(state="get_logistics_service")
@@ -1632,8 +1631,8 @@ async def get_phone(message: types.Message, state: FSMContext):
         phone = message.contact.phone_number[1:]
         user = await get_user(message.from_user.id)
         user.new_phone = phone
-        otp = generateOTP()
-        send_sms(otp=otp, phone=phone)
+        otp = await generateOTP()
+        await send_sms(otp=otp, phone=phone)
         user.otp = otp
         user.save()
         print(user.otp)
@@ -1656,8 +1655,8 @@ async def get_phone_settings(message: types.Message, state: FSMContext):
             phone = message.text
             user = await get_user(message.from_user.id)
             user.new_phone = phone
-            otp = generateOTP()
-            send_sms(otp=otp, phone=phone)
+            otp = await generateOTP()
+            await send_sms(otp=otp, phone=phone)
             user.otp = otp
             user.save()
             print(user.otp)
