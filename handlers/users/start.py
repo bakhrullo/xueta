@@ -132,10 +132,6 @@ async def bot_start(message: types.Message, state: FSMContext):
                             reply_markup=markup, protect_content=True)
         await state.set_state("get_lang")
 
-@dp.message_handler(content_types=['document'], state='*')
-async def bot_start(message: types.Message, state: FSMContext):
-    await message.answer(text=message.document.file_id)
-
 
 @dp.message_handler(state="get_lang")
 async def get_language(message: types.Message, state: FSMContext):
@@ -311,8 +307,8 @@ async def get_phone(message: types.Message, state: FSMContext):
         await state.set_state("get_otp")
 
 
-@dp.message_handler(state="get_category", content_types=[types.ContentTypes.TEXT, types.ContentTypes.DOCUMENT], commands=["import", "export", "settings", "contract", "customs", "cargo", "warehouse", "postal", "certification", "code", "contactus", "feedback", "address", "exchange", "library"])
-@dp.message_handler(state="get_category", content_types=[types.ContentTypes.TEXT, types.ContentTypes.DOCUMENT])
+@dp.message_handler(state="get_category", commands=["import", "export", "settings", "contract", "customs", "cargo", "warehouse", "postal", "certification", "code", "contactus", "feedback", "address", "exchange", "library"])
+@dp.message_handler(state="get_category", content_types=types.ContentTypes.TEXT)
 async def get_service_category(message: types.Message, state: FSMContext):
     await message.answer(message.document.file_id)
     lang = await get_lang(message.from_user.id)
@@ -583,7 +579,7 @@ async def get_service_category(message: types.Message, state: FSMContext):
         elif lang == "en":
             await message.answer("Please select the desired section 👇", reply_markup=markup, protect_content=True)
         await state.set_state("get_category")
-    else:
+    elif message.text == "":
         doc = open("./qaror.pdf", 'rb')
         markup = await library_keyboard(lang)
         await message.answer_document(document=doc, reply_markup=markup, protect_content=True)
@@ -613,7 +609,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         else:
             page = int(this_page) + 1
         markup = await sertification_keyboard(page=page, lang=lang)
-        await call.message.edit_reply_markup(reply_markup=markup, protect_content=True)
+        await call.message.edit_reply_markup(reply_markup=markup)
         await state.update_data(page=page)
     elif command == "last_page":
         max_page = await get_sertification_max_page()
