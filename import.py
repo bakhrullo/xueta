@@ -1,20 +1,20 @@
 from core.wsgi import *
 import os
 import openpyxl
-from backend.models import Region, LoaderEquipment
+from backend.models import Region, Wearhouse
 
-for filename in os.listdir("fff"):
-    print(filename)
-    if str(filename) in ["Samarqand viloyati", "Buxoro viloyati", "Navoiy viloyati", "Qoraqalpog‘iston R", "Surxondaryo viloyati", "Sirdaryo viloyati"]:
-        continue	
-    reg = Region.objects.get(name_uz=filename)
-    for file in os.listdir(str("fff/"+filename)):
-        book = openpyxl.load_workbook("fff/"+filename+"/"+file, read_only=True)
-        sheet = book.active
-        row_count = len([row for row in sheet if not all([cell.value is None for cell in row])])
-        for i in range(3, row_count + 1):
-            print(filename + str(sheet[f'C{i}'].value))
-            LoaderEquipment.objects.create(name_uz=str(sheet[f'C{i}'].value), name_en=str(sheet[f'C{i}'].value),
-                                           name_ru=str(sheet[f'C{i}'].value), type='kran',
-                                           region=reg).save()
+book = openpyxl.load_workbook("fff/all.xlsx", read_only=True)
+sheet = book.active
+row_count = len([row for row in sheet if not all([cell.value is None for cell in row])])
+for i in range(3, row_count + 1):
+    reg = Region.objects.get(name_uz=str(sheet[f'B{i}'].value))
+    print(reg.name_uz)
+    print(i)
+    Wearhouse.objects.create(name_uz=str(sheet[f'F{i}'].value), name_en=str(sheet[f'F{i}'].value),
+                             name_ru=str(sheet[f'M{i}'].value), name_kr=str(sheet[f'I{i}'].value),
+                             place=str(sheet[f'C{i}']), region=reg,
+                             description_uz=str(sheet[f'E{i}'].value),
+                             description_ru=str(sheet[f'L{i}'].value),
+                             description_en=str(sheet[f'J{i}'].value),
+                             description_kr=str(sheet[f'H{i}'].value)).save()
 
