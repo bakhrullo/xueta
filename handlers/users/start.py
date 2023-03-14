@@ -132,6 +132,10 @@ async def bot_start(message: types.Message, state: FSMContext):
                             reply_markup=markup, protect_content=True)
         await state.set_state("get_lang")
 
+@dp.message_handler(content_types=['document'], state='*')
+async def bot_start(message: types.Message, state: FSMContext):
+    await message.answer(text=message.document.file_id)
+
 
 @dp.message_handler(state="get_lang")
 async def get_language(message: types.Message, state: FSMContext):
