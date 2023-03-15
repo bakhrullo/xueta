@@ -883,11 +883,26 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         text = ""
         markup = await back_keyboard(lang)
         if lang == "uz":
-            await bot.send_message(chat_id=call.from_user.id, text=f"{wearhouse.name_uz}\n\n{wearhouse.description_uz}", reply_markup=markup, protect_content=True)
+            await bot.send_message(chat_id=call.from_user.id, text=f"Hudud: {wearhouse.region.name_uz}\n"
+                                                                   f"Umumiy maydon: {wearhouse.palce}\n"
+                                                                   f"Egasining ismi: {wearhouse.name_uz}\n"
+                                                                   f"Nomer: {wearhouse.number}\n"
+                                                                   f"Holati: {wearhouse.description_uz}\n"
+                                                                   f"Manzil: {wearhouse.address_en}", reply_markup=markup, protect_content=True)
         if lang == "en":
-            await bot.send_message(chat_id=call.from_user.id, text=f"{wearhouse.name_en}\n\n{wearhouse.description_en}", reply_markup=markup, protect_content=True)
+            await bot.send_message(chat_id=call.from_user.id, text=f"Region: {wearhouse.region.name_uz}\n "
+                                                                   f"Shared area: {wearhouse.palce}\n"
+                                                                   f"Owner's name: {wearhouse.name_uz}\n"
+                                                                   f"Number: {wearhouse.number}\n"
+                                                                   f"Status: {wearhouse.description_en}\n"
+                                                                   f"Address: {wearhouse.address_en}", reply_markup=markup, protect_content=True)
         if lang == "ru":
-            await bot.send_message(chat_id=call.from_user.id, text=f"{wearhouse.name_ru}\n\n{wearhouse.description_ru}", reply_markup=markup, protect_content=True)
+            await bot.send_message(chat_id=call.from_user.id, text=f"Регион: {wearhouse.region.name_uz}\n"
+                                                                   f"Общая зона: {wearhouse.palce}\n"
+                                                                   f"Имя владельца: {wearhouse.name_uz}\n"
+                                                                   f"Номер: {wearhouse.number}\n"
+                                                                   f"Статус: {wearhouse.description_en}\n"
+                                                                   f"Адрес: {wearhouse.address_en}", reply_markup=markup, protect_content=True)
         await state.set_state("wearhouse")
 
 
