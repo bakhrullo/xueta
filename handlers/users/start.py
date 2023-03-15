@@ -880,7 +880,6 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
     else:
         await call.message.delete()
         wearhouse = await get_wearhouse(call.data)
-        await bot.send_location(chat_id=call.from_user.id, longitude=wearhouse.longitude, latitude=wearhouse.latitude)
         text = ""
         markup = await back_keyboard(lang)
         if lang == "uz":

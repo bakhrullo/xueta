@@ -111,13 +111,13 @@ async def wearhouses_keyboard(lang, region_id):
     for i in regions:
         if lang == "uz":
             text_back = "Ortga"
-            markup.insert(InlineKeyboardButton(text=f"{i.name_uz}", callback_data=i.id))
+            markup.insert(InlineKeyboardButton(text=f"{i.place}", callback_data=i.id))
         if lang == "en":
             text_back = "Back"
-            markup.insert(InlineKeyboardButton(text=f"{i.name_en}", callback_data=i.id))
+            markup.insert(InlineKeyboardButton(text=f"{i.place}", callback_data=i.id))
         if lang == "ru":
             text_back = "Назад"
-            markup.insert(InlineKeyboardButton(text=f"{i.name_ru}", callback_data=i.id))
+            markup.insert(InlineKeyboardButton(text=f"{i.place}", callback_data=i.id))
     if lang == "uz":
         text_back = "Ortga"
         markup.add(InlineKeyboardButton(text=f"🔙 {text_back}", callback_data=f"back"))
