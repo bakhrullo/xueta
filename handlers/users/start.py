@@ -884,21 +884,21 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         markup = await back_keyboard(lang)
         if lang == "uz":
             await bot.send_message(chat_id=call.from_user.id, text=f"Hudud: {wearhouse.region.name_uz}\n"
-                                                                   f"Umumiy maydon: {wearhouse.palce}\n"
+                                                                   f"Umumiy maydon: {wearhouse.place}\n"
                                                                    f"Egasining ismi: {wearhouse.name_uz}\n"
                                                                    f"Nomer: {wearhouse.number}\n"
                                                                    f"Holati: {wearhouse.description_uz}\n"
                                                                    f"Manzil: {wearhouse.address_en}", reply_markup=markup, protect_content=True)
         if lang == "en":
             await bot.send_message(chat_id=call.from_user.id, text=f"Region: {wearhouse.region.name_uz}\n "
-                                                                   f"Shared area: {wearhouse.palce}\n"
+                                                                   f"Shared area: {wearhouse.place}\n"
                                                                    f"Owner's name: {wearhouse.name_uz}\n"
                                                                    f"Number: {wearhouse.number}\n"
                                                                    f"Status: {wearhouse.description_en}\n"
                                                                    f"Address: {wearhouse.address_en}", reply_markup=markup, protect_content=True)
         if lang == "ru":
             await bot.send_message(chat_id=call.from_user.id, text=f"Регион: {wearhouse.region.name_uz}\n"
-                                                                   f"Общая зона: {wearhouse.palce}\n"
+                                                                   f"Общая зона: {wearhouse.place}\n"
                                                                    f"Имя владельца: {wearhouse.name_uz}\n"
                                                                    f"Номер: {wearhouse.number}\n"
                                                                    f"Статус: {wearhouse.description_en}\n"
