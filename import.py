@@ -8,7 +8,7 @@ sheet = book.active
 row_count = len([row for row in sheet if not all([cell.value is None for cell in row])])
 for i in range(3, row_count + 1):
 
-    reg = Region.objects.get(name_uz__contains=str(sheet[f'B{i}'].value))
+    reg = Region.objects.get(name_uz__contains=)
     print(reg.name_uz)
     print(i)
     Wearhouse.objects.create(name_uz=str(sheet[f'F{i}'].value), name_en=str(sheet[f'F{i}'].value),

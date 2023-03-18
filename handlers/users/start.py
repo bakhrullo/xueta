@@ -94,6 +94,8 @@ async def go_home(message: types.Message, state: FSMContext):
 
 @dp.message_handler(CommandStart(), state='*')
 async def bot_start(message: types.Message, state: FSMContext):
+    res = await get_wearhouse(1)
+
     user = await get_user(message.from_id)
     if user is not None:
         if user.lang:
@@ -1127,7 +1129,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
                 text += f"Type: {object.type}       Region: {object.region.name_uz}\nPhone: {object.phone}\nTonna: {object.tonna} t.\n\n"
             if lang == "ru":
                 text += f"Тип: {object.type}        Регион: {object.region.name_uz}\nТелефон: {object.phone}\nТонна: {object.tonna} т.\n\n"
-        await call.message.edit_text(text=text, reply_markup=markup.set_state("logistic_service"))
+        await call.message.edit_text(text=text, reply_markup=markup)
 
 
 @dp.callback_query_handler(state="logistic_service")
@@ -1323,7 +1325,7 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
             await call.message.delete()
             for equipment in equipments:
                 if lang == "uz":
-                    text += f"{i}) {equipment.name_uz}.\n\n"     
+                    text += f"{i}) {equipment.name_uz}.\n\n"
                 if lang == "en":
                     text += f"{i}) {equipment.name_en}.\n\n"     
                 if lang == "ru":
