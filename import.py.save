@@ -7,7 +7,8 @@ book = openpyxl.load_workbook("Avtokran all.xlsx", read_only=True)
 sheet = book.active
 row_count = len([row for row in sheet if not all([cell.value is None for cell in row])])
 for i in range(3, row_count + 1):
-    reg = Region.objects.get(name_uz__icontains=sheet[f'B{i}'].value)
+    if str(sheet[f'B{i}'].value) == "Angren,Olmaliq,Ohangaron,To'ytepa":
+        reg = Region.objects.get(name_uz__icontains=sheet[f'B{i}'].value)
     print(reg.name_uz)
     print(i)
     LoaderEquipments.objects.get_or_create(name_uz=str(sheet[f'E{i}'].value), name_en=str(sheet[f'E{i}'].value),

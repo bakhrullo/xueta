@@ -1,0 +1,72 @@
+import asyncio
+import logging
+
+from aiogram import types
+from aiogram.dispatcher.filters.builtin import CommandStart
+from aiogram.dispatcher import FSMContext
+
+from handlers.users.libs import docs
+from keyboards.inline.main_inline import *
+from keyboards.inline.menu_button import *
+from loader import dp, bot
+from utils.db_api.database import *
+import datetime
+from aiogram.types import ReplyKeyboardRemove
+from geopy.geocoders import Nominatim
+from aiogram.utils.deep_linking import decode_payload, get_start_link
+import re
+import requests
+from docx import Document
+from docx2pdf import convert
+from get_valute import valyuta_kurslari
+import os
+
+
+def isValid(s):
+    Pattern = re.compile("(0|91)?[7-9][0-9]{9}")
+    return Pattern.match(s)
+
+
+async def send_sms(otp, phone):
+    username = 'bestbrok'
+    password = 'tM4!-hmV52Z@'
+    sms_data = {
+        "messages": [{"recipient": f"{phone}", "message-id": "abc000000003", "sms": {"originator": "3700", "content":
+        {"text": f"Ваш код подтверждения для BEST BROK BOT: {otp}"}}}]}
+    url = "http://91.204.239.44/broker-api/send"
+    res = requests.post(url=url, auth=(username, password), json=sms_data)
+    print(res)
+
+
+async def generateOTP():
+    return random.randint(111111, 999999)
+
+
+@dp.message_handler(commands=["menu"], state="*")
+async def add_datas(message: types.Message, state: FSMContext):
+    user = await get_user(message.from_id)
+    if user is not None:
+        if user.lang:
+            lang = await get_lang(message.from_user.id)
+            if user.phone:
+                markup = await user_menu(lang)
+                if lang == "uz":
+                    await message.answer("Botimizga xush kelibsiz. Iltimos kerakli bo'limni tanlang 👇", reply_markup=markup, protect_content=True)
+                elif lang == "ru":
+                    await message.answer("Добро пожаловать в наш бот. Выберите нужный раздел👇", reply_markup=markup, protect_content=True)
+                elif lang == "en":
+                    await message.answer("Welcome to our bot. Please select the desired section 👇", reply_markup=markup, protect_content=True)
+                await state.set_state("get_category")
+            else:
+                markup = await back_to_keyboard(lang)
+                if lang == "uz":
+                    await message.answer("Iltimos ismingizni kiriting 👇", reply_markup=markup, protect_content=True)
+                elif lang == "ru":
+                    await message.answer("Пожалуйста, введите ваше имя 👇", reply_markup=markup, protect_content=True)
+                elif lang == "en":
+                    await message.answer("Please enter your name 👇", reply_markup=markup, protect_content=True)
+                await state.set_state("get_name")
+                
+        else:
+            markup =await language_keyboard()
+            await message.answer(f"Assalomu alaykum, {message.from_user.first_name}👋. \nKerakli tilni tanlang 👇\n\nHello, {message.from_user.first_name}👋. \nChoose the language you need 👇\n\nЗдравствуйте, {message.from_user.first_name}👋. \nВыберите нужный язык 👇", 

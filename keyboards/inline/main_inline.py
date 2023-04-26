@@ -155,10 +155,10 @@ async def loader_equipment_keyboard(lang):
         texts = ["Back", "Cara", "Manipulator", "Evacuator", "crane"]
     if lang == "ru":
         texts = ["Назад", "Кара", "Манипулятор", "Эвакуатор", "Кран"]
-    markup.row(InlineKeyboardButton(text=f"{texts[1]}", callback_data=f"kara"))
-    markup.row(InlineKeyboardButton(text=f"{texts[2]}", callback_data=f"manipulyator"))
-    markup.row(InlineKeyboardButton(text=f"{texts[3]}", callback_data=f"evacuator"))
-    markup.row(InlineKeyboardButton(text=f"{texts[4]}", callback_data=f"kran"))
+    markup.row(InlineKeyboardButton(text=f"{texts[1]}", callback_data=f"Kara"))
+    markup.row(InlineKeyboardButton(text=f"{texts[2]}", callback_data=f"Manipulyator"))
+    markup.row(InlineKeyboardButton(text=f"{texts[3]}", callback_data=f"Evakuator"))
+    markup.row(InlineKeyboardButton(text=f"{texts[4]}", callback_data=f"Avtokran"))
     markup.row(InlineKeyboardButton(text=f"🔙 {texts[0]}", callback_data=f"back"))
     return markup
 

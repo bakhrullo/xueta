@@ -281,10 +281,6 @@ def get_by_tonna(tonna, region):
         print(exx)
         return None
 
-@sync_to_async
-def get_external(region):
-    return LogisticService.objects.filter(region__id=region, is_international=True)
-
 
 @sync_to_async
 def get_by_tonna(tonna, region):
@@ -305,9 +301,6 @@ def get_by_tonna(tonna, region):
     except Exception as exx:
         print(exx)
         return None
-
-
-
     
 @sync_to_async
 def logistic_pagination(page, data):

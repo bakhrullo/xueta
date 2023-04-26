@@ -1092,7 +1092,9 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         await state.update_data(region=call.data)
         data = await state.get_data()
         if data["logist_type"] == "external":
-            await call.answer("dwad")
+            data = await get_external(call.data)
+            text = ""
+            await call.answer()
         text = ""
         markup = await tonna_keyboard(lang)
         if lang == 'uz':
@@ -1341,10 +1343,8 @@ async def get_tif(call: types.CallbackQuery, state: FSMContext):
         if len(text) > 4096:
             for x in range(0, len(text), 4096):
                 await call.message.answer(text[x:x+4096], protect_content=True)
-            await call.message.answer("👆", reply_markup=back_key)
         else:
             await call.message.answer(text, reply_markup=back_key, protect_content=True)
-        
         await state.set_state('equipments')
         #else:
          #   markup = await loader_equipment_keyboard(lang)
@@ -1363,7 +1363,7 @@ async def loader_service(message: types.Message, state: FSMContext):
     message_id = int(message.message_id) + 1
     if message.text in ["⬅️ Orqaga", "⬅️ Back", "⬅️ Назад"]:
         back_key = await back_to_keyboard(lang)
-        markup = await region_keyboard(lang)
+        markup = await loader_equipment_keyboard(lang)
         if lang == "uz":
             await message.answer(".", reply_markup=ReplyKeyboardRemove())
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
@@ -1376,7 +1376,7 @@ async def loader_service(message: types.Message, state: FSMContext):
             await message.answer(".", reply_markup=ReplyKeyboardRemove())
             await bot.delete_message(chat_id=message.from_id, message_id=message_id)
             await message.answer("Выберите нужный регион 👇", reply_markup=markup, protect_content=True)
-        await state.set_state("get_equipment_region")
+        await state.set_state("get_loader_region")
     
 
               
